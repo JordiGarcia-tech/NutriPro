@@ -89,7 +89,7 @@
         input:focus, select:focus, textarea:focus { border-color: #39FF14; }
         label { display: block; margin-bottom: 5px; font-size: 0.85rem; color: #94a3b8; margin-top: 10px; }
 
-        /* ── MENÚ INFERIOR TIPO APP NATIVA ── */
+        /* ── MENÚ INFERIOR ── */
         .bottom-nav { 
             position: fixed; bottom: 0; left: 0; width: 100%; 
             background: #0f172a; border-top: 1px solid #334155; 
@@ -109,7 +109,7 @@
         .seccion { display: none; }
         .seccion.activa { display: block; animation: fadeIn 0.3s ease; }
 
-        /* ── MACROS CON BARRAS DE PROGRESO ── */
+        /* ── MACROS ── */
         .resumen-card {
             margin-top: 10px; border-radius: 12px; border: 1px solid rgba(191,219,254,0.45);
             background: linear-gradient(135deg, rgba(57,255,20,0.10), rgba(15,23,42,0.98));
@@ -118,7 +118,6 @@
         .macro-item { margin-bottom: 12px; }
         .resumen-linea { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
         .resumen-linea span:last-child { font-weight: bold; color: white; }
-        
         .macro-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
         .macro-fill { height: 100%; border-radius: 4px; transition: width 1s ease-in-out; }
         .fill-kcal { background: #ef4444; width: 100%; }
@@ -129,7 +128,7 @@
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
 
-        /* ── VISTA DE PERFIL (SOLO LECTURA) ── */
+        /* ── VISTA DE PERFIL ── */
         .info-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(148,163,184,0.1); padding: 12px; border-radius: 8px; margin-bottom: 10px; }
         .info-label { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
         .info-value { font-size: 1rem; color: white; font-weight: 600; }
@@ -156,15 +155,14 @@
     <div id="loginScreen">
         <div class="card" style="width:100%; max-width:350px; text-align:center;">
             <h1 style="color:#39FF14; margin-bottom: 5px;">NutriPro</h1>
-            <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 20px;">Salud, Nutrición y Entrenamiento</p>
+            <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 20px;">Acceso Seguro</p>
             
             <div id="loginForm">
-                <input id="authEmail" type="email" placeholder="Correo electrónico">
-                <input id="authPass" type="password" placeholder="Contraseña">
+                <input id="authEmail" type="email" placeholder="Correo electrónico" autocomplete="username">
+                <input id="authPass" type="password" placeholder="Contraseña" autocomplete="current-password">
                 <button class="btn" id="btnLogin">Iniciar Sesión</button>
                 <button class="btn btn-secundario" id="btnRegister">Crear Cuenta</button>
             </div>
-            <p id="authMsg" style="color:#ef4444; font-size:0.9rem; margin-top:14px; min-height:15px; font-weight:bold;"></p>
         </div>
     </div>
 
@@ -175,24 +173,10 @@
             
             <div class="resumen-card">
                 <h3 style="margin-top:0; margin-bottom:15px; color:white;">Tus Macros Diarios</h3>
-                
-                <div class="macro-item">
-                    <div class="resumen-linea"><span>🔥 Calorías</span><span id="resumenKcal" style="color:#ef4444;">--</span></div>
-                    <div class="macro-bar"><div class="macro-fill fill-kcal"></div></div>
-                </div>
-                <div class="macro-item">
-                    <div class="resumen-linea"><span>🥩 Proteínas</span><span id="resumenProteinas" style="color:#3b82f6;">--</span></div>
-                    <div class="macro-bar"><div class="macro-fill fill-protes" id="barProtes" style="width:0%;"></div></div>
-                </div>
-                <div class="macro-item">
-                    <div class="resumen-linea"><span>🥑 Grasas</span><span id="resumenGrasas" style="color:#eab308;">--</span></div>
-                    <div class="macro-bar"><div class="macro-fill fill-grasas" id="barGrasas" style="width:0%;"></div></div>
-                </div>
-                <div class="macro-item">
-                    <div class="resumen-linea"><span>🍚 Carbohidratos</span><span id="resumenCarbos" style="color:#39FF14;">--</span></div>
-                    <div class="macro-bar"><div class="macro-fill fill-carbos" id="barCarbos" style="width:0%;"></div></div>
-                </div>
-
+                <div class="macro-item"><div class="resumen-linea"><span>🔥 Calorías</span><span id="resumenKcal" style="color:#ef4444;">--</span></div><div class="macro-bar"><div class="macro-fill fill-kcal"></div></div></div>
+                <div class="macro-item"><div class="resumen-linea"><span>🥩 Proteínas</span><span id="resumenProteinas" style="color:#3b82f6;">--</span></div><div class="macro-bar"><div class="macro-fill fill-protes" id="barProtes" style="width:0%;"></div></div></div>
+                <div class="macro-item"><div class="resumen-linea"><span>🥑 Grasas</span><span id="resumenGrasas" style="color:#eab308;">--</span></div><div class="macro-bar"><div class="macro-fill fill-grasas" id="barGrasas" style="width:0%;"></div></div></div>
+                <div class="macro-item"><div class="resumen-linea"><span>🍚 Carbohidratos</span><span id="resumenCarbos" style="color:#39FF14;">--</span></div><div class="macro-bar"><div class="macro-fill fill-carbos" id="barCarbos" style="width:0%;"></div></div></div>
                 <p id="avisoMacros" style="color:#ef4444; font-size:0.75rem; margin:8px 0 0 0; display:none;">⚠️ Rellena Edad, Peso y Altura en tu Perfil.</p>
             </div>
         </header>
@@ -208,39 +192,32 @@
                         <div class="info-box"><div class="info-label">Edad / Sexo</div><div class="info-value" id="viewEdadSexo">--</div></div>
                         <div class="info-box"><div class="info-label">Peso / Altura</div><div class="info-value" id="viewPesoAltura">--</div></div>
                         <div class="info-box"><div class="info-label">Objetivo</div><div class="info-value" id="viewObjetivo">--</div></div>
-                        <div class="info-box"><div class="info-label">Actividad Diaria</div><div class="info-value" id="viewIntensidad">--</div></div>
+                        <div class="info-box"><div class="info-label">Actividad</div><div class="info-value" id="viewIntensidad">--</div></div>
                     </div>
                     <div class="info-box"><div class="info-label">Días Gimnasio y Dieta</div><div class="info-value" id="viewDiasDieta">--</div></div>
                     <div class="info-box"><div class="info-label">Alergias / No gustan</div><div class="info-value" id="viewNoGustan" style="color:#fbbf24;">--</div></div>
-                    <div class="info-box"><div class="info-label">Patologías / Lesiones</div><div class="info-value" id="viewPatologias" style="color:#ef4444;">--</div></div>
-                    <div class="info-box"><div class="info-label">IA de Nutrición (API Key)</div><div class="info-value" id="viewApiKey">--</div></div>
-
+                    <div class="info-box"><div class="info-label">Patologías</div><div class="info-value" id="viewPatologias" style="color:#ef4444;">--</div></div>
+                    <div class="info-box"><div class="info-label">IA de Nutrición</div><div class="info-value" id="viewApiKey">--</div></div>
                     <button class="btn btn-secundario" id="btnEditarPerfil" style="color:white; border-color:#3b82f6; margin-top:10px;">✏️ Modificar Datos</button>
                     <button class="btn" id="btnInstalarApp" style="background:#3b82f6; color:white; display:none; margin-top: 15px;">📱 Instalar App en el móvil</button>
                 </div>
 
                 <div class="card" id="perfilEditMode">
-                    <p style="font-size:0.85rem; color:#9ca3b8; margin-top:0;">Rellena tus datos. Al guardar, esta ventana se ocultará.</p>
                     <div class="grid-2">
-                        <div><label>Nombre Completo</label><input id="nombre" type="text" placeholder="Tu nombre"></div>
+                        <div><label>Nombre</label><input id="nombre" type="text"></div>
                         <div><label>Sexo</label><select id="sexo"><option value="hombre">Hombre</option><option value="mujer">Mujer</option></select></div>
-                        <div><label>Edad</label><input id="edad" type="number" placeholder="Ej: 30"></div>
-                        <div><label>Altura (cm)</label><input id="altura" type="number" placeholder="Ej: 175"></div>
-                        <div><label>Peso Actual (kg)</label><input id="peso" type="number" placeholder="Ej: 80" step="0.1"></div>
-                        <div><label>Objetivo</label><select id="objetivo"><option value="recomposicion">Recomposición Corporal</option><option value="perdergrasa">Perder Grasa</option><option value="ganarmusculo">Ganar Músculo</option></select></div>
-                        <div><label>Actividad Diaria</label><select id="intensidad"><option value="sedentario">Sedentario (Oficina)</option><option value="baja">Ligera (Poco mov.)</option><option value="media" selected>Media (Activo)</option><option value="alta">Alta (Físico pesado)</option></select></div>
-                        <div><label>Días de Gimnasio</label><select id="diasEntrenoPerfil"><option value="2">2 días</option><option value="3" selected>3 días</option><option value="4">4 días</option><option value="5">5 días</option><option value="6">6 días</option></select></div>
+                        <div><label>Edad</label><input id="edad" type="number"></div>
+                        <div><label>Altura (cm)</label><input id="altura" type="number"></div>
+                        <div><label>Peso (kg)</label><input id="peso" type="number" step="0.1"></div>
+                        <div><label>Objetivo</label><select id="objetivo"><option value="recomposicion">Recomposición</option><option value="perdergrasa">Perder Grasa</option><option value="ganarmusculo">Ganar Músculo</option></select></div>
+                        <div><label>Actividad</label><select id="intensidad"><option value="sedentario">Sedentario</option><option value="baja">Ligera</option><option value="media" selected>Media</option><option value="alta">Alta</option></select></div>
+                        <div><label>Días Gym</label><select id="diasEntrenoPerfil"><option value="2">2 días</option><option value="3" selected>3 días</option><option value="4">4 días</option><option value="5">5 días</option><option value="6">6 días</option></select></div>
                     </div>
-                    <label>Tipo de Dieta</label><select id="tipoDieta"><option value="estandar">Estándar (De todo)</option><option value="vegetariana">Vegetariana</option><option value="vegana">Vegana</option><option value="keto">Keto (Cetogénica)</option></select>
-                    <label>Alimentos que NO te gustan o Alergias</label><input id="noGustan" type="text" placeholder="Ej: Pescado, leche, tomate...">
-                    <label>Patologías o Notas de Salud</label><textarea id="patologias" rows="2" placeholder="Ej: Lesión de hombro, gastritis, hipertensión..."></textarea>
-                    
-                    <h3 style="color:#39FF14; margin-top:20px; margin-bottom:5px;">API IA (Groq)</h3>
-                    <input id="apiKey" type="password" placeholder="Pega aquí tu clave (gsk_...)">
-                    <div style="font-size:0.85rem; color:#9CA3AF; line-height:1.6; background:rgba(15,23,42,0.5); padding:12px; border-radius:8px; border:1px solid rgba(148,163,184,0.2); margin-top:10px; margin-bottom:15px;">
-                        🔑 Consigue tu clave gratis en <a href="https://console.groq.com/keys" target="_blank" style="color:#39FF14; text-decoration:underline;">console.groq.com/keys</a>
-                    </div>
-                    
+                    <label>Tipo Dieta</label><select id="tipoDieta"><option value="estandar">Estándar</option><option value="vegetariana">Vegetariana</option><option value="vegana">Vegana</option><option value="keto">Keto</option></select>
+                    <label>No gustan / Alergias</label><input id="noGustan" type="text" placeholder="Ej: Pescado...">
+                    <label>Patologías</label><textarea id="patologias" rows="2" placeholder="Ej: Lesión hombro..."></textarea>
+                    <h3 style="color:#39FF14; margin-top:20px;">API IA (Groq)</h3>
+                    <input id="apiKey" type="password" placeholder="gsk_...">
                     <button class="btn" id="btnGuardarPerfil">💾 Guardar Perfil</button>
                 </div>
                 <button class="btn btn-secundario" id="btnLogout" style="border-color:#ef4444; color:#ef4444; margin-top:15px;">Cerrar Sesión</button>
@@ -248,23 +225,10 @@
 
             <section id="menu" class="seccion">
                 <h2 style="margin-top:0;">Plan Nutricional</h2>
-                
                 <div class="card" style="padding:15px; margin-bottom: 15px;">
                     <div class="grid-2">
-                        <div>
-                            <label style="margin-top:0;">Tiempo de preparación</label>
-                            <select id="filtroTiempo">
-                                <option value="normal">Normal</option>
-                                <option value="expres">⚡ Exprés (Menos de 15 min)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label style="margin-top:0;">Presupuesto</label>
-                            <select id="filtroPrecio">
-                                <option value="normal">Normal</option>
-                                <option value="lowcost">💶 Económico (Low Cost)</option>
-                            </select>
-                        </div>
+                        <div><label style="margin-top:0;">Tiempo</label><select id="filtroTiempo"><option value="normal">Normal</option><option value="expres">⚡ Exprés</option></select></div>
+                        <div><label style="margin-top:0;">Presupuesto</label><select id="filtroPrecio"><option value="normal">Normal</option><option value="lowcost">💶 Low Cost</option></select></div>
                     </div>
                     <button class="btn" id="btnGenerarTodo" style="margin-top: 15px;">Generar Menú Completo</button>
                 </div>
@@ -277,7 +241,7 @@
                 </div>
 
                 <div id="contenedorListaCompra" class="card" style="display:none; border-color: #eab308;">
-                    <h3 style="margin-top:0; color:#eab308;">🛒 Lista de la Compra (Mercadona)</h3>
+                    <h3 style="margin-top:0; color:#eab308;">🛒 Lista (Mercadona)</h3>
                     <div id="detalleListaCompra" style="font-size:0.9rem; line-height:1.6; color:#e5e7eb;"></div>
                 </div>
 
@@ -288,10 +252,9 @@
             </section>
 
             <section id="entreno" class="seccion">
-                <h2 style="margin-top:0;">Rutina Científica (Hipertrofia)</h2>
+                <h2 style="margin-top:0;">Rutina Científica</h2>
                 <div class="card">
-                    <p style="font-size:0.85rem; color:#9CA3AF">Rutina optimizada con <strong style="color:white;">Frecuencia 2</strong> para <strong id="diasEntrenoLabel" style="color:white;">--</strong>.</p>
-                    <label>Nivel de experiencia</label>
+                    <p style="font-size:0.85rem; color:#9CA3AF">Frecuencia 2 para <strong id="diasEntrenoLabel" style="color:white;">--</strong>.</p>
                     <select id="nivelEntreno"><option value="principiante">Principiante</option><option value="intermedio">Intermedio</option><option value="avanzado">Avanzado</option></select>
                     <button class="btn" id="btnGenerarEntreno">Generar Rutina Óptima</button>
                 </div>
@@ -389,10 +352,14 @@
             messagingSenderId: "13739644877",
             appId: "1:13739644877:web:f540f77fc690693ba55684"
         };
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth(); const db = firebase.firestore(); const storage = firebase.storage();
         
-        // PERSISTENCIA
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth(); 
+        const db = firebase.firestore(); 
+        const storage = firebase.storage();
+        
+        // Activar persistencia para que funcione rápido y offline
         db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
         db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
         auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
@@ -401,12 +368,18 @@
         let userData = { perfil: {}, cardio: [], progresos: [], fotos: [], dieta: {}, entrenamiento: "", chat: [] };
         let chartPeso = null;
 
-        // TOAST
+        // TOAST (Alertas)
         function showToast(m, t = 'success') {
             const c = document.getElementById('toast-container');
             const d = document.createElement('div');
             d.className = `toast ${t}`; d.innerText = m;
             c.appendChild(d); setTimeout(() => d.remove(), 3000);
+        }
+
+        // CONTROL DE PANTALLA DE CARGA
+        function hideSplash() {
+            const splash = document.getElementById('splashScreen');
+            if(splash) { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 300); }
         }
 
         // PWA INSTALL LOGIC
@@ -427,7 +400,7 @@
                 if (outcome === 'accepted') document.getElementById('btnInstalarApp').style.display = 'none';
                 deferredPrompt = null;
             } else if (isIos()) {
-                alert("🍎 INSTALAR EN iPHONE:\n\n1. Toca el botón 'Compartir' (el cuadrado con flecha) en la parte inferior de Safari.\n\n2. Sube el menú y selecciona 'Añadir a la pantalla de inicio'.");
+                alert("🍎 INSTALAR EN iPHONE:\n\n1. Toca el botón 'Compartir' (cuadrado con flecha) abajo en Safari.\n\n2. Selecciona 'Añadir a la pantalla de inicio'.");
             } else {
                 showToast("Busca 'Añadir a inicio' en el menú de tu navegador", "warning");
             }
@@ -450,17 +423,12 @@
                 document.getElementById('viewPatologias').innerText = userData.perfil.patologias || 'Saludable';
                 const k = document.getElementById('apiKey').value.trim() || localStorage.getItem('groq_key');
                 document.getElementById('viewApiKey').innerHTML = k ? '<span style="color:#39FF14">✅ OK</span>' : '<span style="color:#ef4444">❌ Falta API</span>';
-                
                 document.getElementById('userNombre').innerText = userData.perfil.nombre || 'Usuario';
                 document.getElementById('diasEntrenoLabel').innerText = (userData.perfil.diasEntreno || '3') + " días/semana";
             } catch(e) {}
         }
 
-        function hideSplash() {
-            const splash = document.getElementById('splashScreen');
-            if(splash) { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 300); }
-        }
-
+        // CARGA AL INICIAR SESIÓN
         auth.onAuthStateChanged(async user => {
             if(user) {
                 currentUser = user;
@@ -494,15 +462,15 @@
                         if(userData.dieta.merienda) document.querySelector('#comida_merienda .comida-detalle').innerHTML = userData.dieta.merienda;
                         if(userData.dieta.cena) document.querySelector('#comida_cena .comida-detalle').innerHTML = userData.dieta.cena;
                         if(userData.entrenamiento) { document.getElementById('resultadoEntreno').innerHTML = userData.entrenamiento; document.getElementById('resultadoEntreno').style.display = 'block'; document.getElementById('btnDescargarPDFEntreno').style.display = 'block'; }
+                        
                         renderCardio(); renderProgresos(); renderFotos(); renderChat();
                     }
-                } catch(e) { console.error("Error cargando perfil", e); }
+                } catch(e) { console.error("Error cargando datos", e); }
                 
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainApp').style.display = 'block';
                 calcMacros();
                 hideSplash();
-
             } else {
                 hideSplash();
                 document.getElementById('loginScreen').style.display = 'flex';
@@ -515,7 +483,6 @@
             document.getElementById('perfilEditMode').style.display = 'block';
         };
 
-        // GUARDADO DE PERFIL OFFLINE-FIRST
         document.getElementById('btnGuardarPerfil').onclick = () => {
             const btn = document.getElementById('btnGuardarPerfil');
             btn.innerText = "⏳ Guardando..."; btn.disabled = true;
@@ -536,21 +503,14 @@
                 };
                 
                 try { localStorage.setItem('groq_key', document.getElementById('apiKey').value.trim()); } catch(err) {}
-                
-                if (currentUser) {
-                    db.collection('users').doc(currentUser.uid).set({perfil: userData.perfil}, {merge:true}).catch(e=>{});
-                }
+                if (currentUser) { db.collection('users').doc(currentUser.uid).set({perfil: userData.perfil}, {merge:true}).catch(e=>{}); }
                 
                 updateProfileView(); calcMacros();
                 document.getElementById('perfilEditMode').style.display = 'none';
                 document.getElementById('perfilViewMode').style.display = 'block';
                 showToast("✅ Perfil guardado");
-                
-            } catch (error) {
-                showToast("❌ Error en el formulario", "error");
-            } finally {
-                btn.innerText = "💾 Guardar Perfil"; btn.disabled = false;
-            }
+            } catch (error) { showToast("❌ Error al guardar", "error");
+            } finally { btn.innerText = "💾 Guardar Perfil"; btn.disabled = false; }
         };
 
         function calcMacros() {
@@ -565,9 +525,7 @@
             if(obj === 'perdergrasa') kcal -= 400; if(obj === 'ganarmusculo') kcal += 300;
             document.getElementById('resumenKcal').innerText = kcal + " kcal";
             let pr = Math.round(p*2); let gr = Math.round(p*0.8); let ch = Math.round((kcal - (pr*4 + gr*9))/4);
-            document.getElementById('resumenProteinas').innerText = pr+"g";
-            document.getElementById('resumenGrasas').innerText = gr+"g";
-            document.getElementById('resumenCarbos').innerText = ch+"g";
+            document.getElementById('resumenProteinas').innerText = pr+"g"; document.getElementById('resumenGrasas').innerText = gr+"g"; document.getElementById('resumenCarbos').innerText = ch+"g";
             document.getElementById('barProtes').style.width = "30%"; document.getElementById('barGrasas').style.width = "30%"; document.getElementById('barCarbos').style.width = "40%";
         }
 
@@ -589,10 +547,7 @@
             const tiempo = document.getElementById('filtroTiempo').value === 'expres' ? 'MUY RÁPIDA (menos de 15 minutos)' : 'Normal';
             const precio = document.getElementById('filtroPrecio').value === 'lowcost' ? 'ECONÓMICA (ingredientes baratos)' : 'Normal';
             
-            const res = await llamarIA(`Dame una opción de ${t} para dieta ${document.getElementById('tipoDieta').value} de unas ${k}. 
-            Restricciones: Evitar ${userData.perfil.noGustan}. Tiempo: ${tiempo}. Presupuesto: ${precio}. Patologia: ${userData.perfil.patologias}.
-            Formato: **[Nombre]** \n- Gramos \n- Pasos.`);
-            
+            const res = await llamarIA(`Dame una opción de ${t} para dieta ${document.getElementById('tipoDieta').value} de ${k}. Restricciones: Evitar ${userData.perfil.noGustan}. Tiempo: ${tiempo}. Presupuesto: ${precio}. Patologia: ${userData.perfil.patologias}. Formato: **[Nombre]** \n- Gramos \n- Pasos.`);
             if(res) {
                 const txt = res.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 d.innerHTML = txt; userData.dieta[t] = txt;
@@ -607,50 +562,33 @@
             b.innerText = "Generar Menú Completo del Día"; b.disabled = false;
         };
 
-        // LISTA DE COMPRA MERCADONA
         document.getElementById('btnListaCompra').onclick = async () => {
-            const b = document.getElementById('btnListaCompra');
-            const cont = document.getElementById('detalleListaCompra');
+            const b = document.getElementById('btnListaCompra'); const cont = document.getElementById('detalleListaCompra');
             const menuTxt = document.getElementById('contenedorMenu').innerText;
             if(menuTxt.includes('--')) return showToast("Genera el menú primero", "error");
             
-            b.disabled = true; b.innerText = "⏳...";
-            document.getElementById('contenedorListaCompra').style.display = 'block';
-            cont.innerHTML = "Organizando pasillos...";
-
-            const res = await llamarIA(`Menú: ${menuTxt}. Haz lista de compra Mercadona. AGRUPA POR PASILLOS (Frutería, Lácteos, etc). 
-            Recomienda marcas Hacendado/Mercadona. Solo devuelve texto con viñetas agrupado por pasillos (con los nombres de pasillo en negrita).`);
-            
+            b.disabled = true; b.innerText = "⏳..."; document.getElementById('contenedorListaCompra').style.display = 'block'; cont.innerHTML = "Organizando pasillos...";
+            const res = await llamarIA(`Menú: ${menuTxt}. Haz lista de compra Mercadona. AGRUPA POR PASILLOS (Frutería, Lácteos, etc). Recomienda marcas Hacendado/Mercadona. Solo devuelve texto con viñetas agrupado por pasillos.`);
             if(res) cont.innerHTML = res.replace(/```html|```/g, '').replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             b.disabled = false; b.innerText = "🛒 Generar Lista Mercadona";
         };
 
-        // 🌟 ENTRENO (MODIFICADO PARA 6-8 EJERCICIOS Y DURAR 1 HORA)
         document.getElementById('btnGenerarEntreno').onclick = async () => {
             const b = document.getElementById('btnGenerarEntreno'); b.disabled = true;
             const resDiv = document.getElementById('resultadoEntreno');
-            resDiv.style.display = 'block'; resDiv.innerHTML = "<p style='text-align:center'>Analizando evidencia y montando esquema...</p>";
+            resDiv.style.display = 'block'; resDiv.innerHTML = "<p style='text-align:center'>Analizando evidencia...</p>";
             document.getElementById('btnDescargarPDFEntreno').style.display = 'none';
             
             const d = parseInt(userData.perfil.diasEntreno || '3');
             let r = d === 4 ? "Torso/Pierna" : (d >= 5 ? "Push/Pull/Legs" : "Full Body");
-            
-            const promptEntreno = `Rutina de gimnasio de FUERZA de exactamente ${d} días a la semana. Esquema cientifico: ${r}. Nivel: ${document.getElementById('nivelEntreno').value}. Patología: ${userData.perfil.patologias || 'Ninguna'}. 
-            INSTRUCCIÓN OBLIGATORIA: Pon entre 6 y 8 ejercicios por día (mezcla básicos y accesorios) para que el entrenamiento dure 1 hora completa e intensa.
-            Devuelve SOLO una Tabla HTML con class="excel-table". Columnas: Día | Músculo | Ejercicio | Series x Reps | Tutorial. 
-            En la columna 'Ejercicio', pon el nombre y al lado este botón: <button class="btn-small no-print btn-cambiar-ejercicio" data-musculo="MÚSCULO AQUI">🔄</button>
-            En la columna 'Tutorial', pon este enlace: <a class="btn-yt" href="https://www.youtube.com/results?search_query=como+hacer+NOMBRE+gimnasio" target="_blank">▶ Vídeo</a>`;
+            const promptEntreno = `Rutina FUERZA ${d} días. Esquema: ${r}. Nivel: ${document.getElementById('nivelEntreno').value}. Patología: ${userData.perfil.patologias}. Pon entre 6 y 8 ejercicios por día. Devuelve SOLO Tabla HTML class="excel-table". Columnas: Día | Músculo | Ejercicio | Series x Reps | Tutorial. Ejercicio con botón: <button class="btn-small no-print btn-cambiar-ejercicio" data-musculo="MÚSCULO AQUI">🔄</button>. Tutorial: <a class="btn-yt" href="https://www.youtube.com/results?search_query=como+hacer+NOMBRE+gimnasio" target="_blank">▶ Vídeo</a>`;
             
             const respuesta = await llamarIA(promptEntreno);
             if(respuesta) {
-                resDiv.innerHTML = respuesta.replace(/```html|```/g, '');
-                userData.entrenamiento = resDiv.innerHTML; 
+                resDiv.innerHTML = respuesta.replace(/```html|```/g, ''); userData.entrenamiento = resDiv.innerHTML; 
                 if(currentUser) db.collection('users').doc(currentUser.uid).set({entrenamiento: userData.entrenamiento}, {merge:true}).catch(e=>{});
-                document.getElementById('btnDescargarPDFEntreno').style.display = 'block';
-                showToast("✅ Rutina científica de 1 hora generada");
-            } else {
-                showToast("❌ Error al generar la rutina", "error");
-            }
+                document.getElementById('btnDescargarPDFEntreno').style.display = 'block'; showToast("✅ Rutina generada");
+            } else { showToast("❌ Error al generar la rutina", "error"); }
             b.disabled = false; b.innerText = "Generar Rutina Óptima";
         };
 
@@ -658,8 +596,7 @@
             const btn = e.target.closest('.btn-cambiar-ejercicio'); if(!btn) return;
             const tr = btn.closest('tr'); const musculo = btn.getAttribute('data-musculo');
             btn.innerText = "⏳"; btn.disabled = true;
-            const prompt = `Dame SOLO el nombre de un ejercicio seguro para ${musculo} diferente. Patología a evitar: ${userData.perfil.patologias}. Sin explicaciones.`;
-            const nuevoEjercicio = await llamarIA(prompt);
+            const nuevoEjercicio = await llamarIA(`Dame SOLO el nombre de un ejercicio seguro para ${musculo} diferente. Patología a evitar: ${userData.perfil.patologias}. Sin explicaciones.`);
             if(nuevoEjercicio) {
                 const nombreLimpio = nuevoEjercicio.replace(/\*\*/g, '').trim();
                 tr.cells[2].innerHTML = `${nombreLimpio} <button class="btn-small no-print btn-cambiar-ejercicio" data-musculo="${musculo}">🔄</button>`;
@@ -674,14 +611,9 @@
             const d = document.getElementById('listaProgresos');
             d.innerHTML = userData.progresos.map(p => `<div class="foto-item">📅 ${p.fecha} - ⚖️ <strong>${p.peso} kg</strong></div>`).join('');
             if(userData.progresos.length > 0) {
-                document.getElementById('graficaPeso').style.display = 'block';
-                if(chartPeso) chartPeso.destroy();
+                document.getElementById('graficaPeso').style.display = 'block'; if(chartPeso) chartPeso.destroy();
                 const rev = [...userData.progresos].reverse();
-                chartPeso = new Chart(document.getElementById('graficaPeso'), {
-                    type: 'line',
-                    data: { labels: rev.map(x=>x.fecha), datasets: [{label: 'kg', data: rev.map(x=>x.peso), borderColor: '#39FF14', tension: 0.3}] },
-                    options: { plugins: {legend: {display: false}}}
-                });
+                chartPeso = new Chart(document.getElementById('graficaPeso'), { type: 'line', data: { labels: rev.map(x=>x.fecha), datasets: [{label: 'kg', data: rev.map(x=>x.peso), borderColor: '#39FF14', tension: 0.3}] }, options: { plugins: {legend: {display: false}}} });
             }
         }
 
@@ -690,9 +622,7 @@
             userData.progresos.unshift({fecha: new Date().toLocaleDateString(), peso: v});
             userData.perfil.peso = v; document.getElementById('peso').value = v;
             if(currentUser) db.collection('users').doc(currentUser.uid).set({progresos: userData.progresos, perfil: userData.perfil}, {merge:true}).catch(e=>{});
-            renderProgresos(); updateProfileView(); calcMacros();
-            document.getElementById('pesoHoy').value = '';
-            showToast("✅ Peso guardado");
+            renderProgresos(); updateProfileView(); calcMacros(); document.getElementById('pesoHoy').value = ''; showToast("✅ Peso guardado");
         };
 
         function renderCardio() {
@@ -723,8 +653,7 @@
         window.borrarFoto = i => {
             if(confirm("¿Borrar esta foto?")) {
                 const f = userData.fotos[i]; if(f.path) storage.ref(f.path).delete().catch(e=>{});
-                userData.fotos.splice(i,1); 
-                if(currentUser) db.collection('users').doc(currentUser.uid).set({fotos: userData.fotos}, {merge:true}).catch(e=>{});
+                userData.fotos.splice(i,1); if(currentUser) db.collection('users').doc(currentUser.uid).set({fotos: userData.fotos}, {merge:true}).catch(e=>{});
                 renderFotos(); showToast("✅ Foto borrada");
             }
         };
@@ -738,10 +667,7 @@
             const i = document.getElementById('chatInput'); const m = i.value; if(!m) return;
             i.value = ''; userData.chat.push({role:'user', content:m}); renderChat();
             const r = await llamarIA(`Contexto patología: ${userData.perfil.patologias}. Pregunta: ${m}`); 
-            if(r) { 
-                userData.chat.push({role:'assistant', content:r}); renderChat(); 
-                if(currentUser) db.collection('users').doc(currentUser.uid).set({chat: userData.chat}, {merge:true}).catch(e=>{}); 
-            }
+            if(r) { userData.chat.push({role:'assistant', content:r}); renderChat(); if(currentUser) db.collection('users').doc(currentUser.uid).set({chat: userData.chat}, {merge:true}).catch(e=>{}); }
         };
 
         document.getElementById('btnGenerarConsejos').onclick = async () => {
@@ -751,8 +677,7 @@
 
         document.querySelectorAll('.tab-btn').forEach(b => {
             b.onclick = () => {
-                document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
-                document.querySelectorAll('.seccion').forEach(x => x.classList.remove('activa'));
+                document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active')); document.querySelectorAll('.seccion').forEach(x => x.classList.remove('activa'));
                 b.classList.add('active'); document.getElementById(b.dataset.tab).classList.add('activa');
             }
         });
@@ -760,15 +685,62 @@
         document.getElementById('btnDescargarPDF').onclick = () => html2pdf().from(document.getElementById('contenedorMenu')).save('Dieta.pdf');
         document.getElementById('btnDescargarPDFEntreno').onclick = () => html2pdf().from(document.getElementById('contenedorEntrenoPdf')).save('Rutina.pdf');
         
-        // LOGIN / REGISTRO ULTRA RAPIDO
-        document.getElementById('btnLogin').onclick = () => {
-            document.getElementById('btnLogin').innerText="⏳..."; 
-            auth.signInWithEmailAndPassword(document.getElementById('authEmail').value, document.getElementById('authPass').value).catch(e => { document.getElementById('btnLogin').innerText="Iniciar Sesión"; showToast("Error al iniciar", "error"); }); 
+        // 🌟 SISTEMA DE LOGIN Y REGISTRO BLINDADO (CON CHIVATO DE ERRORES)
+        document.getElementById('btnLogin').onclick = async () => {
+            const emailInput = document.getElementById('authEmail').value;
+            const passInput = document.getElementById('authPass').value;
+            
+            // Limpiamos los espacios fantasmas que añade el iPhone al correo
+            const email = emailInput.trim(); 
+            const pass = passInput; 
+            
+            if(!email || !pass) {
+                showToast("⚠️ Escribe tu correo y contraseña", "warning");
+                return;
+            }
+            
+            const btn = document.getElementById('btnLogin');
+            btn.innerText = "⏳ Comprobando..."; 
+            btn.disabled = true;
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, pass);
+                // Si va bien, el sistema entra solo.
+            } catch(error) {
+                btn.innerText = "Iniciar Sesión"; 
+                btn.disabled = false;
+                
+                // Chivato de errores específicos
+                if(error.code === 'auth/invalid-email') showToast("❌ El correo no tiene formato válido", "error");
+                else if(error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') showToast("❌ Correo o contraseña incorrectos", "error");
+                else if(error.code === 'auth/too-many-requests') showToast("❌ Demasiados intentos. Espera unos minutos.", "error");
+                else showToast("❌ Error: " + error.message, "error");
+            }
         };
-        document.getElementById('btnRegister').onclick = () => {
-            document.getElementById('btnRegister').innerText="⏳..."; 
-            auth.createUserWithEmailAndPassword(document.getElementById('authEmail').value, document.getElementById('authPass').value).catch(e => { document.getElementById('btnRegister').innerText="Crear Cuenta"; showToast("Email ya en uso", "error"); }); 
+        
+        document.getElementById('btnRegister').onclick = async () => {
+            const email = document.getElementById('authEmail').value.trim();
+            const pass = document.getElementById('authPass').value;
+            
+            if(!email || !pass) { showToast("⚠️ Escribe tu correo y contraseña", "warning"); return; }
+            if(pass.length < 6) { showToast("⚠️ La contraseña debe tener al menos 6 caracteres", "warning"); return; }
+            
+            const btn = document.getElementById('btnRegister');
+            btn.innerText = "⏳ Creando..."; 
+            btn.disabled = true;
+            
+            try {
+                await auth.createUserWithEmailAndPassword(email, pass);
+            } catch(error) {
+                btn.innerText = "Crear Cuenta"; 
+                btn.disabled = false;
+                
+                if(error.code === 'auth/email-already-in-use') showToast("❌ Ese correo ya está registrado", "error");
+                else if(error.code === 'auth/invalid-email') showToast("❌ El correo no tiene formato válido", "error");
+                else showToast("❌ Error: " + error.message, "error");
+            }
         };
+
         document.getElementById('btnLogout').onclick = () => auth.signOut();
     </script>
 </body>

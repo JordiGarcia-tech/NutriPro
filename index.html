@@ -390,13 +390,11 @@
             appId: "1:13739644877:web:f540f77fc690693ba55684"
         };
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth(); 
-        const db = firebase.firestore(); 
-        const storage = firebase.storage();
+        const auth = firebase.auth(); const db = firebase.firestore(); const storage = firebase.storage();
         
-        // 🌟 LA MAGIA DE LA PERSISTENCIA (El "Disco duro" que faltaba)
+        // PERSISTENCIA
         db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
-        db.enablePersistence({ synchronizeTabs: true }).catch(() => { console.log("Caché offline no disponible"); });
+        db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
         auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
         let currentUser = null;
@@ -469,7 +467,6 @@
                 document.getElementById('loginForm').style.display = 'none';
                 
                 try {
-                    // Al tener la persistencia activada, get() resuelve rapidísimo desde la memoria del móvil
                     const doc = await db.collection('users').doc(user.uid).get();
                     if(doc.exists) { 
                         userData = { ...userData, ...doc.data() };
@@ -497,10 +494,9 @@
                         if(userData.dieta.merienda) document.querySelector('#comida_merienda .comida-detalle').innerHTML = userData.dieta.merienda;
                         if(userData.dieta.cena) document.querySelector('#comida_cena .comida-detalle').innerHTML = userData.dieta.cena;
                         if(userData.entrenamiento) { document.getElementById('resultadoEntreno').innerHTML = userData.entrenamiento; document.getElementById('resultadoEntreno').style.display = 'block'; document.getElementById('btnDescargarPDFEntreno').style.display = 'block'; }
-                        
                         renderCardio(); renderProgresos(); renderFotos(); renderChat();
                     }
-                } catch(e) { console.error("Error cargando datos", e); }
+                } catch(e) { console.error("Error cargando perfil", e); }
                 
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainApp').style.display = 'block';
@@ -519,39 +515,42 @@
             document.getElementById('perfilEditMode').style.display = 'block';
         };
 
-        // 🌟 GUARDADO OFFLINE-FIRST (No se congela nunca)
+        // GUARDADO DE PERFIL OFFLINE-FIRST
         document.getElementById('btnGuardarPerfil').onclick = () => {
             const btn = document.getElementById('btnGuardarPerfil');
-            
-            // 1. Recogemos los datos inmediatamente
-            userData.perfil = {
-                nombre: document.getElementById('nombre').value,
-                sexo: document.getElementById('sexo').value,
-                edad: document.getElementById('edad').value,
-                altura: document.getElementById('altura').value,
-                peso: document.getElementById('peso').value,
-                objetivo: document.getElementById('objetivo').value,
-                intensidad: document.getElementById('intensidad').value,
-                diasEntreno: document.getElementById('diasEntrenoPerfil').value,
-                tipoDieta: document.getElementById('tipoDieta').value,
-                noGustan: document.getElementById('noGustan').value,
-                patologias: document.getElementById('patologias').value
-            };
-            
-            try { localStorage.setItem('groq_key', document.getElementById('apiKey').value.trim()); } catch(err) {}
-            
-            // 2. Guardamos en Firebase SIN hacer esperar al usuario (Offline-First)
-            if (currentUser) {
-                db.collection('users').doc(currentUser.uid).set({perfil: userData.perfil}, {merge:true})
-                  .catch(e => console.log("Se sincronizará en segundo plano"));
+            btn.innerText = "⏳ Guardando..."; btn.disabled = true;
+
+            try {
+                userData.perfil = {
+                    nombre: document.getElementById('nombre').value,
+                    sexo: document.getElementById('sexo').value,
+                    edad: document.getElementById('edad').value,
+                    altura: document.getElementById('altura').value,
+                    peso: document.getElementById('peso').value,
+                    objetivo: document.getElementById('objetivo').value,
+                    intensidad: document.getElementById('intensidad').value,
+                    diasEntreno: document.getElementById('diasEntrenoPerfil').value,
+                    tipoDieta: document.getElementById('tipoDieta').value,
+                    noGustan: document.getElementById('noGustan').value,
+                    patologias: document.getElementById('patologias').value
+                };
+                
+                try { localStorage.setItem('groq_key', document.getElementById('apiKey').value.trim()); } catch(err) {}
+                
+                if (currentUser) {
+                    db.collection('users').doc(currentUser.uid).set({perfil: userData.perfil}, {merge:true}).catch(e=>{});
+                }
+                
+                updateProfileView(); calcMacros();
+                document.getElementById('perfilEditMode').style.display = 'none';
+                document.getElementById('perfilViewMode').style.display = 'block';
+                showToast("✅ Perfil guardado");
+                
+            } catch (error) {
+                showToast("❌ Error en el formulario", "error");
+            } finally {
+                btn.innerText = "💾 Guardar Perfil"; btn.disabled = false;
             }
-            
-            // 3. Actualizamos la pantalla AL INSTANTE
-            updateProfileView(); 
-            calcMacros();
-            document.getElementById('perfilEditMode').style.display = 'none';
-            document.getElementById('perfilViewMode').style.display = 'block';
-            showToast("✅ Perfil guardado");
         };
 
         function calcMacros() {
@@ -626,19 +625,33 @@
             b.disabled = false; b.innerText = "🛒 Generar Lista Mercadona";
         };
 
+        // 🌟 ENTRENO (MODIFICADO PARA 6-8 EJERCICIOS Y DURAR 1 HORA)
         document.getElementById('btnGenerarEntreno').onclick = async () => {
             const b = document.getElementById('btnGenerarEntreno'); b.disabled = true;
-            const d = parseInt(userData.perfil.diasEntreno);
+            const resDiv = document.getElementById('resultadoEntreno');
+            resDiv.style.display = 'block'; resDiv.innerHTML = "<p style='text-align:center'>Analizando evidencia y montando esquema...</p>";
+            document.getElementById('btnDescargarPDFEntreno').style.display = 'none';
+            
+            const d = parseInt(userData.perfil.diasEntreno || '3');
             let r = d === 4 ? "Torso/Pierna" : (d >= 5 ? "Push/Pull/Legs" : "Full Body");
-            const res = await llamarIA(`Rutina FUERZA ${d} días. Esquema cientifico: ${r}. Nivel: ${document.getElementById('nivelEntreno').value}. Patología: ${userData.perfil.patologias}. Tabla HTML class="excel-table". Columnas: Día, Músculo, Ejercicio (con boton 🔄), SeriesxReps, Tutorial YouTube.`);
-            if(res) {
-                document.getElementById('resultadoEntreno').innerHTML = res.replace(/```html|```/g, '');
-                document.getElementById('resultadoEntreno').style.display = 'block';
-                document.getElementById('btnDescargarPDFEntreno').style.display = 'block';
-                userData.entrenamiento = document.getElementById('resultadoEntreno').innerHTML; 
+            
+            const promptEntreno = `Rutina de gimnasio de FUERZA de exactamente ${d} días a la semana. Esquema cientifico: ${r}. Nivel: ${document.getElementById('nivelEntreno').value}. Patología: ${userData.perfil.patologias || 'Ninguna'}. 
+            INSTRUCCIÓN OBLIGATORIA: Pon entre 6 y 8 ejercicios por día (mezcla básicos y accesorios) para que el entrenamiento dure 1 hora completa e intensa.
+            Devuelve SOLO una Tabla HTML con class="excel-table". Columnas: Día | Músculo | Ejercicio | Series x Reps | Tutorial. 
+            En la columna 'Ejercicio', pon el nombre y al lado este botón: <button class="btn-small no-print btn-cambiar-ejercicio" data-musculo="MÚSCULO AQUI">🔄</button>
+            En la columna 'Tutorial', pon este enlace: <a class="btn-yt" href="https://www.youtube.com/results?search_query=como+hacer+NOMBRE+gimnasio" target="_blank">▶ Vídeo</a>`;
+            
+            const respuesta = await llamarIA(promptEntreno);
+            if(respuesta) {
+                resDiv.innerHTML = respuesta.replace(/```html|```/g, '');
+                userData.entrenamiento = resDiv.innerHTML; 
                 if(currentUser) db.collection('users').doc(currentUser.uid).set({entrenamiento: userData.entrenamiento}, {merge:true}).catch(e=>{});
+                document.getElementById('btnDescargarPDFEntreno').style.display = 'block';
+                showToast("✅ Rutina científica de 1 hora generada");
+            } else {
+                showToast("❌ Error al generar la rutina", "error");
             }
-            b.disabled = false;
+            b.disabled = false; b.innerText = "Generar Rutina Óptima";
         };
 
         document.getElementById('resultadoEntreno').addEventListener('click', async (e) => {
@@ -747,6 +760,7 @@
         document.getElementById('btnDescargarPDF').onclick = () => html2pdf().from(document.getElementById('contenedorMenu')).save('Dieta.pdf');
         document.getElementById('btnDescargarPDFEntreno').onclick = () => html2pdf().from(document.getElementById('contenedorEntrenoPdf')).save('Rutina.pdf');
         
+        // LOGIN / REGISTRO ULTRA RAPIDO
         document.getElementById('btnLogin').onclick = () => {
             document.getElementById('btnLogin').innerText="⏳..."; 
             auth.signInWithEmailAndPassword(document.getElementById('authEmail').value, document.getElementById('authPass').value).catch(e => { document.getElementById('btnLogin').innerText="Iniciar Sesión"; showToast("Error al iniciar", "error"); }); 

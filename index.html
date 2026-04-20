@@ -89,7 +89,7 @@
         input:focus, select:focus, textarea:focus { border-color: #39FF14; }
         label { display: block; margin-bottom: 5px; font-size: 0.85rem; color: #94a3b8; margin-top: 10px; }
 
-        /* ── MENÚ INFERIOR ── */
+        /* ── MENÚ INFERIOR TIPO APP NATIVA ── */
         .bottom-nav { 
             position: fixed; bottom: 0; left: 0; width: 100%; 
             background: #0f172a; border-top: 1px solid #334155; 
@@ -109,7 +109,7 @@
         .seccion { display: none; }
         .seccion.activa { display: block; animation: fadeIn 0.3s ease; }
 
-        /* ── MACROS ── */
+        /* ── MACROS CON BARRAS DE PROGRESO ── */
         .resumen-card {
             margin-top: 10px; border-radius: 12px; border: 1px solid rgba(191,219,254,0.45);
             background: linear-gradient(135deg, rgba(57,255,20,0.10), rgba(15,23,42,0.98));
@@ -118,6 +118,7 @@
         .macro-item { margin-bottom: 12px; }
         .resumen-linea { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
         .resumen-linea span:last-child { font-weight: bold; color: white; }
+        
         .macro-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
         .macro-fill { height: 100%; border-radius: 4px; transition: width 1s ease-in-out; }
         .fill-kcal { background: #ef4444; width: 100%; }
@@ -128,7 +129,7 @@
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
 
-        /* ── VISTA DE PERFIL ── */
+        /* ── VISTA DE PERFIL (SOLO LECTURA) ── */
         .info-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(148,163,184,0.1); padding: 12px; border-radius: 8px; margin-bottom: 10px; }
         .info-label { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
         .info-value { font-size: 1rem; color: white; font-weight: 600; }
@@ -204,20 +205,29 @@
 
                 <div class="card" id="perfilEditMode">
                     <div class="grid-2">
-                        <div><label>Nombre</label><input id="nombre" type="text"></div>
+                        <div><label>Nombre</label><input id="nombre" type="text" placeholder="Tu nombre"></div>
                         <div><label>Sexo</label><select id="sexo"><option value="hombre">Hombre</option><option value="mujer">Mujer</option></select></div>
-                        <div><label>Edad</label><input id="edad" type="number"></div>
-                        <div><label>Altura (cm)</label><input id="altura" type="number"></div>
-                        <div><label>Peso (kg)</label><input id="peso" type="number" step="0.1"></div>
+                        <div><label>Edad</label><input id="edad" type="number" placeholder="Ej: 30"></div>
+                        <div><label>Altura (cm)</label><input id="altura" type="number" placeholder="Ej: 175"></div>
+                        <div><label>Peso (kg)</label><input id="peso" type="number" step="0.1" placeholder="Ej: 80"></div>
                         <div><label>Objetivo</label><select id="objetivo"><option value="recomposicion">Recomposición</option><option value="perdergrasa">Perder Grasa</option><option value="ganarmusculo">Ganar Músculo</option></select></div>
                         <div><label>Actividad</label><select id="intensidad"><option value="sedentario">Sedentario</option><option value="baja">Ligera</option><option value="media" selected>Media</option><option value="alta">Alta</option></select></div>
                         <div><label>Días Gym</label><select id="diasEntrenoPerfil"><option value="2">2 días</option><option value="3" selected>3 días</option><option value="4">4 días</option><option value="5">5 días</option><option value="6">6 días</option></select></div>
                     </div>
                     <label>Tipo Dieta</label><select id="tipoDieta"><option value="estandar">Estándar</option><option value="vegetariana">Vegetariana</option><option value="vegana">Vegana</option><option value="keto">Keto</option></select>
-                    <label>No gustan / Alergias</label><input id="noGustan" type="text" placeholder="Ej: Pescado...">
-                    <label>Patologías</label><textarea id="patologias" rows="2" placeholder="Ej: Lesión hombro..."></textarea>
-                    <h3 style="color:#39FF14; margin-top:20px;">API IA (Groq)</h3>
-                    <input id="apiKey" type="password" placeholder="gsk_...">
+                    <label>No gustan / Alergias</label><input id="noGustan" type="text" placeholder="Ej: Pescado, tomate...">
+                    <label>Patologías / Lesiones</label><textarea id="patologias" rows="2" placeholder="Ej: Lesión hombro..."></textarea>
+                    
+                    <h3 style="color:#39FF14; margin-top:20px; margin-bottom:5px;">API IA (Groq)</h3>
+                    <input id="apiKey" type="password" placeholder="Pega aquí tu clave (gsk_...)">
+                    
+                    <div style="font-size:0.85rem; color:#9CA3AF; line-height:1.6; background:rgba(15,23,42,0.5); padding:12px; border-radius:8px; border:1px solid rgba(148,163,184,0.2); margin-top:10px; margin-bottom:15px;">
+                        🔑 <strong>¿Cómo obtener tu clave gratuita?</strong><br>
+                        1. Entra en <a href="https://console.groq.com/keys" target="_blank" style="color:#39FF14; text-decoration:underline;">console.groq.com/keys</a><br>
+                        2. Inicia sesión o regístrate y pulsa "Create API Key".<br>
+                        3. Copia la clave (empieza por <em>gsk_</em>) y pégala aquí.
+                    </div>
+                    
                     <button class="btn" id="btnGuardarPerfil">💾 Guardar Perfil</button>
                 </div>
                 <button class="btn btn-secundario" id="btnLogout" style="border-color:#ef4444; color:#ef4444; margin-top:15px;">Cerrar Sesión</button>
@@ -353,13 +363,9 @@
             appId: "1:13739644877:web:f540f77fc690693ba55684"
         };
         
-        // Inicializar Firebase
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth(); 
-        const db = firebase.firestore(); 
-        const storage = firebase.storage();
+        const auth = firebase.auth(); const db = firebase.firestore(); const storage = firebase.storage();
         
-        // Activar persistencia para que funcione rápido y offline
         db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
         db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
         auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
@@ -368,18 +374,11 @@
         let userData = { perfil: {}, cardio: [], progresos: [], fotos: [], dieta: {}, entrenamiento: "", chat: [] };
         let chartPeso = null;
 
-        // TOAST (Alertas)
         function showToast(m, t = 'success') {
             const c = document.getElementById('toast-container');
             const d = document.createElement('div');
             d.className = `toast ${t}`; d.innerText = m;
             c.appendChild(d); setTimeout(() => d.remove(), 3000);
-        }
-
-        // CONTROL DE PANTALLA DE CARGA
-        function hideSplash() {
-            const splash = document.getElementById('splashScreen');
-            if(splash) { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 300); }
         }
 
         // PWA INSTALL LOGIC
@@ -428,7 +427,11 @@
             } catch(e) {}
         }
 
-        // CARGA AL INICIAR SESIÓN
+        function hideSplash() {
+            const splash = document.getElementById('splashScreen');
+            if(splash) { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 300); }
+        }
+
         auth.onAuthStateChanged(async user => {
             if(user) {
                 currentUser = user;
@@ -462,10 +465,9 @@
                         if(userData.dieta.merienda) document.querySelector('#comida_merienda .comida-detalle').innerHTML = userData.dieta.merienda;
                         if(userData.dieta.cena) document.querySelector('#comida_cena .comida-detalle').innerHTML = userData.dieta.cena;
                         if(userData.entrenamiento) { document.getElementById('resultadoEntreno').innerHTML = userData.entrenamiento; document.getElementById('resultadoEntreno').style.display = 'block'; document.getElementById('btnDescargarPDFEntreno').style.display = 'block'; }
-                        
                         renderCardio(); renderProgresos(); renderFotos(); renderChat();
                     }
-                } catch(e) { console.error("Error cargando datos", e); }
+                } catch(e) { console.error("Error", e); }
                 
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainApp').style.display = 'block';
@@ -581,7 +583,7 @@
             
             const d = parseInt(userData.perfil.diasEntreno || '3');
             let r = d === 4 ? "Torso/Pierna" : (d >= 5 ? "Push/Pull/Legs" : "Full Body");
-            const promptEntreno = `Rutina FUERZA ${d} días. Esquema: ${r}. Nivel: ${document.getElementById('nivelEntreno').value}. Patología: ${userData.perfil.patologias}. Pon entre 6 y 8 ejercicios por día. Devuelve SOLO Tabla HTML class="excel-table". Columnas: Día | Músculo | Ejercicio | Series x Reps | Tutorial. Ejercicio con botón: <button class="btn-small no-print btn-cambiar-ejercicio" data-musculo="MÚSCULO AQUI">🔄</button>. Tutorial: <a class="btn-yt" href="https://www.youtube.com/results?search_query=como+hacer+NOMBRE+gimnasio" target="_blank">▶ Vídeo</a>`;
+            const promptEntreno = `Rutina FUERZA ${d} días. Esquema: ${r}. Nivel: ${document.getElementById('nivelEntreno').value}. Patología: ${userData.perfil.patologias}. Pon entre 6 y 8 ejercicios por día para que dure 1 hora. Devuelve SOLO Tabla HTML class="excel-table". Columnas: Día | Músculo | Ejercicio | Series x Reps | Tutorial. Ejercicio con botón: <button class="btn-small no-print btn-cambiar-ejercicio" data-musculo="MÚSCULO AQUI">🔄</button>. Tutorial: <a class="btn-yt" href="https://www.youtube.com/results?search_query=como+hacer+NOMBRE+gimnasio" target="_blank">▶ Vídeo</a>`;
             
             const respuesta = await llamarIA(promptEntreno);
             if(respuesta) {
@@ -685,32 +687,22 @@
         document.getElementById('btnDescargarPDF').onclick = () => html2pdf().from(document.getElementById('contenedorMenu')).save('Dieta.pdf');
         document.getElementById('btnDescargarPDFEntreno').onclick = () => html2pdf().from(document.getElementById('contenedorEntrenoPdf')).save('Rutina.pdf');
         
-        // 🌟 SISTEMA DE LOGIN Y REGISTRO BLINDADO (CON CHIVATO DE ERRORES)
+        // LOGIN / REGISTRO ULTRA RAPIDO (CON FILTRO DE ESPACIOS)
         document.getElementById('btnLogin').onclick = async () => {
             const emailInput = document.getElementById('authEmail').value;
             const passInput = document.getElementById('authPass').value;
-            
-            // Limpiamos los espacios fantasmas que añade el iPhone al correo
             const email = emailInput.trim(); 
             const pass = passInput; 
             
-            if(!email || !pass) {
-                showToast("⚠️ Escribe tu correo y contraseña", "warning");
-                return;
-            }
+            if(!email || !pass) { showToast("⚠️ Escribe tu correo y contraseña", "warning"); return; }
             
             const btn = document.getElementById('btnLogin');
-            btn.innerText = "⏳ Comprobando..."; 
-            btn.disabled = true;
+            btn.innerText = "⏳ Comprobando..."; btn.disabled = true;
             
             try {
                 await auth.signInWithEmailAndPassword(email, pass);
-                // Si va bien, el sistema entra solo.
             } catch(error) {
-                btn.innerText = "Iniciar Sesión"; 
-                btn.disabled = false;
-                
-                // Chivato de errores específicos
+                btn.innerText = "Iniciar Sesión"; btn.disabled = false;
                 if(error.code === 'auth/invalid-email') showToast("❌ El correo no tiene formato válido", "error");
                 else if(error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') showToast("❌ Correo o contraseña incorrectos", "error");
                 else if(error.code === 'auth/too-many-requests') showToast("❌ Demasiados intentos. Espera unos minutos.", "error");
@@ -726,15 +718,12 @@
             if(pass.length < 6) { showToast("⚠️ La contraseña debe tener al menos 6 caracteres", "warning"); return; }
             
             const btn = document.getElementById('btnRegister');
-            btn.innerText = "⏳ Creando..."; 
-            btn.disabled = true;
+            btn.innerText = "⏳ Creando..."; btn.disabled = true;
             
             try {
                 await auth.createUserWithEmailAndPassword(email, pass);
             } catch(error) {
-                btn.innerText = "Crear Cuenta"; 
-                btn.disabled = false;
-                
+                btn.innerText = "Crear Cuenta"; btn.disabled = false;
                 if(error.code === 'auth/email-already-in-use') showToast("❌ Ese correo ya está registrado", "error");
                 else if(error.code === 'auth/invalid-email') showToast("❌ El correo no tiene formato válido", "error");
                 else showToast("❌ Error: " + error.message, "error");

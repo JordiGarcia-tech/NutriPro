@@ -364,14 +364,14 @@
         </main>
         
         <nav class="bottom-nav">
-            <button class="tab-btn active" data-tab="perfil"><span>👤</span> Perfil</button>
-            <button class="tab-btn" data-tab="menu"><span>🍽️</span> Dieta</button>
-            <button class="tab-btn" data-tab="entreno"><span>💪</span> Entreno</button>
-            <button class="tab-btn" data-tab="cardio"><span>🏃</span> Cardio</button>
-            <button class="tab-btn" data-tab="progreso"><span>📈</span> Peso</button>
-            <button class="tab-btn" data-tab="fotos"><span>📸</span> Fotos</button>
-            <button class="tab-btn" data-tab="consejos"><span>💡</span> Tips</button>
-            <button class="tab-btn" data-tab="chat"><span>🤖</span> Chat</button>
+            <button class="tab-btn active" data-tab="perfil"><span>👤</span>Perfil</button>
+            <button class="tab-btn" data-tab="menu"><span>🍽️</span>Dieta</button>
+            <button class="tab-btn" data-tab="entreno"><span>💪</span>Rutina</button>
+            <button class="tab-btn" data-tab="cardio"><span>🏃</span>Cardio</button>
+            <button class="tab-btn" data-tab="progreso"><span>📈</span>Peso</button>
+            <button class="tab-btn" data-tab="fotos"><span>📸</span>Fotos</button>
+            <button class="tab-btn" data-tab="consejos"><span>💡</span>Tips</button>
+            <button class="tab-btn" data-tab="chat"><span>🤖</span>Chat</button>
         </nav>
     </div>
 
@@ -390,10 +390,13 @@
             appId: "1:13739644877:web:f540f77fc690693ba55684"
         };
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth(); const db = firebase.firestore(); const storage = firebase.storage();
+        const auth = firebase.auth(); 
+        const db = firebase.firestore(); 
+        const storage = firebase.storage();
         
-        // Optimizamos memoria
+        // 🌟 LA MAGIA DE LA PERSISTENCIA (El "Disco duro" que faltaba)
         db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
+        db.enablePersistence({ synchronizeTabs: true }).catch(() => { console.log("Caché offline no disponible"); });
         auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
         let currentUser = null;
@@ -426,7 +429,7 @@
                 if (outcome === 'accepted') document.getElementById('btnInstalarApp').style.display = 'none';
                 deferredPrompt = null;
             } else if (isIos()) {
-                alert("🍎 INSTALAR EN iPHONE:\n\n1. Toca el botón 'Compartir' (el cuadrado con flecha hacia arriba) en Safari.\n\n2. Baja y selecciona 'Añadir a la pantalla de inicio'.");
+                alert("🍎 INSTALAR EN iPHONE:\n\n1. Toca el botón 'Compartir' (el cuadrado con flecha) en la parte inferior de Safari.\n\n2. Sube el menú y selecciona 'Añadir a la pantalla de inicio'.");
             } else {
                 showToast("Busca 'Añadir a inicio' en el menú de tu navegador", "warning");
             }
@@ -466,7 +469,7 @@
                 document.getElementById('loginForm').style.display = 'none';
                 
                 try {
-                    // Consulta directa sin doble caché para acelerar en iPhone
+                    // Al tener la persistencia activada, get() resuelve rapidísimo desde la memoria del móvil
                     const doc = await db.collection('users').doc(user.uid).get();
                     if(doc.exists) { 
                         userData = { ...userData, ...doc.data() };
@@ -494,9 +497,10 @@
                         if(userData.dieta.merienda) document.querySelector('#comida_merienda .comida-detalle').innerHTML = userData.dieta.merienda;
                         if(userData.dieta.cena) document.querySelector('#comida_cena .comida-detalle').innerHTML = userData.dieta.cena;
                         if(userData.entrenamiento) { document.getElementById('resultadoEntreno').innerHTML = userData.entrenamiento; document.getElementById('resultadoEntreno').style.display = 'block'; document.getElementById('btnDescargarPDFEntreno').style.display = 'block'; }
+                        
                         renderCardio(); renderProgresos(); renderFotos(); renderChat();
                     }
-                } catch(e) { console.error("Error cargando perfil", e); }
+                } catch(e) { console.error("Error cargando datos", e); }
                 
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainApp').style.display = 'block';
@@ -515,49 +519,39 @@
             document.getElementById('perfilEditMode').style.display = 'block';
         };
 
-        // ====== SOLUCIÓN AL BLOQUEO DE SAFARI EN IPHONE (OFFLINE-FIRST) ======
+        // 🌟 GUARDADO OFFLINE-FIRST (No se congela nunca)
         document.getElementById('btnGuardarPerfil').onclick = () => {
             const btn = document.getElementById('btnGuardarPerfil');
-            btn.innerText = "⏳ Guardando..."; btn.disabled = true;
-
-            try {
-                // 1. Recogemos los datos
-                userData.perfil = {
-                    nombre: document.getElementById('nombre').value,
-                    sexo: document.getElementById('sexo').value,
-                    edad: document.getElementById('edad').value,
-                    altura: document.getElementById('altura').value,
-                    peso: document.getElementById('peso').value,
-                    objetivo: document.getElementById('objetivo').value,
-                    intensidad: document.getElementById('intensidad').value,
-                    diasEntreno: document.getElementById('diasEntrenoPerfil').value,
-                    tipoDieta: document.getElementById('tipoDieta').value,
-                    noGustan: document.getElementById('noGustan').value,
-                    patologias: document.getElementById('patologias').value
-                };
-                
-                // 2. Guardamos la clave (ignoramos si Safari lo bloquea en modo privado)
-                try { localStorage.setItem('groq_key', document.getElementById('apiKey').value.trim()); } catch(err) {}
-                
-                // 3. Enviamos a Firebase PERO NO ESPERAMOS a que internet conteste. 
-                // Así evitamos que la pantalla se quede colgada "pensando".
-                if (currentUser) {
-                    db.collection('users').doc(currentUser.uid).set({perfil: userData.perfil}, {merge:true})
-                      .catch(e => console.log("Se sincronizará en segundo plano"));
-                }
-                
-                // 4. Actualizamos la pantalla AL INSTANTE
-                updateProfileView(); calcMacros();
-                document.getElementById('perfilEditMode').style.display = 'none';
-                document.getElementById('perfilViewMode').style.display = 'block';
-                showToast("✅ Perfil guardado");
-                
-            } catch (error) {
-                showToast("❌ Error en el formulario", "error");
-            } finally {
-                // 5. Restablecemos el botón inmediatamente
-                btn.innerText = "💾 Guardar Perfil"; btn.disabled = false;
+            
+            // 1. Recogemos los datos inmediatamente
+            userData.perfil = {
+                nombre: document.getElementById('nombre').value,
+                sexo: document.getElementById('sexo').value,
+                edad: document.getElementById('edad').value,
+                altura: document.getElementById('altura').value,
+                peso: document.getElementById('peso').value,
+                objetivo: document.getElementById('objetivo').value,
+                intensidad: document.getElementById('intensidad').value,
+                diasEntreno: document.getElementById('diasEntrenoPerfil').value,
+                tipoDieta: document.getElementById('tipoDieta').value,
+                noGustan: document.getElementById('noGustan').value,
+                patologias: document.getElementById('patologias').value
+            };
+            
+            try { localStorage.setItem('groq_key', document.getElementById('apiKey').value.trim()); } catch(err) {}
+            
+            // 2. Guardamos en Firebase SIN hacer esperar al usuario (Offline-First)
+            if (currentUser) {
+                db.collection('users').doc(currentUser.uid).set({perfil: userData.perfil}, {merge:true})
+                  .catch(e => console.log("Se sincronizará en segundo plano"));
             }
+            
+            // 3. Actualizamos la pantalla AL INSTANTE
+            updateProfileView(); 
+            calcMacros();
+            document.getElementById('perfilEditMode').style.display = 'none';
+            document.getElementById('perfilViewMode').style.display = 'block';
+            showToast("✅ Perfil guardado");
         };
 
         function calcMacros() {
@@ -584,7 +578,7 @@
             try {
                 const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                     method: "POST", headers: {"Authorization": `Bearer ${k}`, "Content-Type": "application/json"},
-                    body: JSON.stringify({model: "llama-3.3-70b-versatile", messages: [{role: "system", content: "Experto en nutrición y deporte en España. Formato HTML limpio."}, {role: "user", content: p}]})
+                    body: JSON.stringify({model: "llama-3.3-70b-versatile", messages: [{role: "system", content: "Experto en nutrición y deporte en España. Formato HTML limpio sin relleno."}, {role: "user", content: p}]})
                 });
                 const d = await r.json(); return d.choices[0].message.content;
             } catch(e) { return null; }
@@ -603,7 +597,6 @@
             if(res) {
                 const txt = res.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 d.innerHTML = txt; userData.dieta[t] = txt;
-                // Guardado offline-first
                 if(currentUser) db.collection('users').doc(currentUser.uid).set({dieta: userData.dieta}, {merge:true}).catch(e=>{});
             }
         }
@@ -754,7 +747,6 @@
         document.getElementById('btnDescargarPDF').onclick = () => html2pdf().from(document.getElementById('contenedorMenu')).save('Dieta.pdf');
         document.getElementById('btnDescargarPDFEntreno').onclick = () => html2pdf().from(document.getElementById('contenedorEntrenoPdf')).save('Rutina.pdf');
         
-        // LOGIN / REGISTRO ULTRA RAPIDO
         document.getElementById('btnLogin').onclick = () => {
             document.getElementById('btnLogin').innerText="⏳..."; 
             auth.signInWithEmailAndPassword(document.getElementById('authEmail').value, document.getElementById('authPass').value).catch(e => { document.getElementById('btnLogin').innerText="Iniciar Sesión"; showToast("Error al iniciar", "error"); }); 

@@ -419,9 +419,7 @@
                 document.getElementById('viewDiasDieta').innerText = `${userData.perfil.diasEntreno || '3'} días Gym - Dieta ${dietaMap[userData.perfil.tipoDieta] || '--'}`;
                 document.getElementById('viewNoGustan').innerText = userData.perfil.noGustan || 'Ninguna alergia';
                 document.getElementById('viewPatologias').innerText = userData.perfil.patologias || 'Saludable';
-                
-                // CAMBIO: AHORA LEE LA API KEY DE FIRESTORE, NO DE LOCALSTORAGE
-                const k = userData.perfil.apiKey || document.getElementById('apiKey').value.trim();
+                const k = document.getElementById('apiKey').value.trim() || localStorage.getItem('groq_key');
                 document.getElementById('viewApiKey').innerHTML = k ? '<span style="color:#39FF14">✅ OK</span>' : '<span style="color:#ef4444">❌ Falta API</span>';
                 document.getElementById('userNombre').innerText = userData.perfil.nombre || 'Usuario';
                 document.getElementById('diasEntrenoLabel').innerText = (userData.perfil.diasEntreno || '3') + " días/semana";
@@ -453,9 +451,7 @@
                         document.getElementById('tipoDieta').value = userData.perfil.tipoDieta || 'estandar';
                         document.getElementById('noGustan').value = userData.perfil.noGustan || '';
                         document.getElementById('patologias').value = userData.perfil.patologias || '';
-                        
-                        // CARGAMOS LA API KEY DESDE LA BASE DE DATOS
-                        document.getElementById('apiKey').value = userData.perfil.apiKey || '';
+                        document.getElementById('apiKey').value = localStorage.getItem('groq_key') || '';
                         
                         if(userData.perfil.edad && userData.perfil.peso) {
                             updateProfileView();
@@ -504,10 +500,10 @@
                     diasEntreno: document.getElementById('diasEntrenoPerfil').value,
                     tipoDieta: document.getElementById('tipoDieta').value,
                     noGustan: document.getElementById('noGustan').value,
-                    patologias: document.getElementById('patologias').value,
-                    apiKey: document.getElementById('apiKey').value.trim() // GUARDAMOS LA API EN FIRESTORE
+                    patologias: document.getElementById('patologias').value
                 };
                 
+                try { localStorage.setItem('groq_key', document.getElementById('apiKey').value.trim()); } catch(err) {}
                 if (currentUser) { db.collection('users').doc(currentUser.uid).set({perfil: userData.perfil}, {merge:true}).catch(e=>{}); }
                 
                 updateProfileView(); calcMacros();
@@ -535,23 +531,15 @@
         }
 
         async function llamarIA(p) {
-            // AHORA COGE LA API KEY DE FIREBASE, NO DEL NAVEGADOR
-            const k = userData.perfil.apiKey || document.getElementById('apiKey').value.trim();
-            
-            if(!k) {
-                showToast("⚠️ Falta la API Key de Groq. Vete a Perfil y modifícalo.", "error");
-                return null;
-            }
+            const k = document.getElementById('apiKey').value.trim() || localStorage.getItem('groq_key');
+            if(!k) return null;
             try {
                 const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                     method: "POST", headers: {"Authorization": `Bearer ${k}`, "Content-Type": "application/json"},
                     body: JSON.stringify({model: "llama-3.3-70b-versatile", messages: [{role: "system", content: "Experto en nutrición y deporte en España. Formato HTML limpio sin relleno."}, {role: "user", content: p}]})
                 });
                 const d = await r.json(); return d.choices[0].message.content;
-            } catch(e) { 
-                showToast("❌ Error al conectar con la IA", "error");
-                return null; 
-            }
+            } catch(e) { return null; }
         }
 
         async function cambiarComida(t) {
@@ -565,15 +553,10 @@
                 const txt = res.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 d.innerHTML = txt; userData.dieta[t] = txt;
                 if(currentUser) db.collection('users').doc(currentUser.uid).set({dieta: userData.dieta}, {merge:true}).catch(e=>{});
-            } else {
-                d.innerHTML = "Error al generar. Comprueba tu API Key.";
             }
         }
 
         document.getElementById('btnGenerarTodo').onclick = async () => {
-            const k = userData.perfil.apiKey || document.getElementById('apiKey').value.trim();
-            if(!k) return showToast("⚠️ Guarda tu API Key de Groq en el Perfil primero", "warning");
-
             const b = document.getElementById('btnGenerarTodo'); b.disabled = true;
             const ts = ['desayuno', 'comida', 'merienda', 'cena'];
             for(let i=0; i<ts.length; i++) { b.innerText = `⏳ (${i+1}/4)`; await cambiarComida(ts[i]); }
@@ -592,9 +575,6 @@
         };
 
         document.getElementById('btnGenerarEntreno').onclick = async () => {
-            const k = userData.perfil.apiKey || document.getElementById('apiKey').value.trim();
-            if(!k) return showToast("⚠️ Guarda tu API Key de Groq en el Perfil primero", "warning");
-
             const b = document.getElementById('btnGenerarEntreno'); b.disabled = true;
             const resDiv = document.getElementById('resultadoEntreno');
             resDiv.style.display = 'block'; resDiv.innerHTML = "<p style='text-align:center'>Analizando evidencia...</p>";
@@ -646,6 +626,7 @@
             renderProgresos(); updateProfileView(); calcMacros(); document.getElementById('pesoHoy').value = ''; showToast("✅ Peso guardado");
         };
 
+        // 🌟 SISTEMA DE CARDIO MEJORADO CON BOTÓN DE BORRAR Y PULSACIONES MEDIAS
         function renderCardio() {
             document.getElementById('listaCardio').innerHTML = userData.cardio.map((c, i) => {
                 let pulso = c.pulsaciones ? `<br>❤️ Media: ${c.pulsaciones} ppm` : '';
@@ -798,45 +779,9 @@
             }
         });
 
-        // =====================================================================
-        // 🚨 CAMBIO IMPORTANTE: SISTEMA DE PDF COMPATIBLE CON iPHONE (SAFARI)
-        // =====================================================================
-        function descargarPDF(elementId, filename) {
-            const element = document.getElementById(elementId);
-            const opt = {
-                margin:       10,
-                filename:     filename,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#020617' },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            showToast("⏳ Generando PDF...", "warning");
-
-            html2pdf().set(opt).from(element).outputPdf('blob').then((pdfBlob) => {
-                const blobUrl = URL.createObjectURL(pdfBlob);
-                
-                // Si es un iPhone/iPad, abrimos en pestaña nueva para que el usuario pueda usar el botón de "Compartir" de Apple
-                if (isIos()) {
-                    window.open(blobUrl, '_blank');
-                    showToast("✅ PDF abierto en nueva pestaña", "success");
-                } else {
-                    // Si es Android o PC, descargamos directamente
-                    const a = document.createElement('a');
-                    a.href = blobUrl;
-                    a.download = filename;
-                    a.click();
-                    showToast("✅ PDF descargado", "success");
-                }
-            }).catch(err => {
-                showToast("❌ Error al crear PDF", "error");
-            });
-        }
-
-        document.getElementById('btnDescargarPDF').onclick = () => descargarPDF('contenedorMenu', 'Dieta_NutriPro.pdf');
-        document.getElementById('btnDescargarPDFEntreno').onclick = () => descargarPDF('contenedorEntrenoPdf', 'Rutina_NutriPro.pdf');
-        // =====================================================================
-
+        document.getElementById('btnDescargarPDF').onclick = () => html2pdf().from(document.getElementById('contenedorMenu')).save('Dieta.pdf');
+        document.getElementById('btnDescargarPDFEntreno').onclick = () => html2pdf().from(document.getElementById('contenedorEntrenoPdf')).save('Rutina.pdf');
+        
         document.getElementById('btnLogin').onclick = async () => {
             const emailInput = document.getElementById('authEmail').value;
             const passInput = document.getElementById('authPass').value;

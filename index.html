@@ -304,7 +304,7 @@
                 <h2 class="titulo-seccion">📸 Fotos de Progreso</h2>
                 <div class="card">
                     <div class="grid-2">
-                        <input type="file" id="fotoInput" accept="image/*" style="padding:8px;">
+                        <input type="file" id="fotoInput" accept="image/jpeg, image/png, image/jpg" style="padding:8px;">
                         <input type="date" id="fechaFoto">
                     </div>
                     <button class="btn" id="btnSubirFoto">Subir a la Nube Segura</button>
@@ -638,13 +638,38 @@
             renderCardio(); showToast("✅ Cardio guardado");
         };
 
+        // 🌟 SUBIDA DE FOTOS ARREGLADA CON FEEDBACK VISUAL
         document.getElementById('btnSubirFoto').onclick = () => {
-            const f = document.getElementById('fotoInput').files[0]; if(!f) return;
-            const path = `users/${currentUser.uid}/${Date.now()}`;
-            storage.ref(path).put(f).then(s => s.ref.getDownloadURL()).then(url => {
-                userData.fotos.unshift({url, fecha: document.getElementById('fechaFoto').value, path});
+            const fileInput = document.getElementById('fotoInput'); 
+            const fecha = document.getElementById('fechaFoto').value;
+            
+            if(!fileInput.files[0]) { showToast("⚠️ Selecciona una foto de la galería o cámara", "warning"); return; }
+            if(!fecha) { showToast("⚠️ Selecciona una fecha", "warning"); return; }
+            
+            const file = fileInput.files[0]; 
+            const btn = document.getElementById('btnSubirFoto'); 
+            
+            btn.innerText = "⏳ Subiendo (puede tardar)..."; 
+            btn.disabled = true;
+            
+            const path = `users/${currentUser.uid}/fotos/${Date.now()}`;
+            
+            storage.ref(path).put(file)
+            .then(snapshot => snapshot.ref.getDownloadURL())
+            .then(url => {
+                userData.fotos.unshift({url: url, fecha: fecha, path: path});
                 db.collection('users').doc(currentUser.uid).set({fotos: userData.fotos}, {merge:true}).catch(e=>{});
-                renderFotos(); showToast("✅ Foto subida");
+                renderFotos(); 
+                showToast("✅ Foto subida correctamente");
+                fileInput.value = '';
+            })
+            .catch(err => {
+                console.error(err);
+                showToast("❌ Error de conexión al subir", "error");
+            })
+            .finally(() => {
+                btn.innerText = "Subir a la Nube Segura"; 
+                btn.disabled = false;
             });
         };
         
@@ -655,7 +680,8 @@
         window.borrarFoto = i => {
             if(confirm("¿Borrar esta foto?")) {
                 const f = userData.fotos[i]; if(f.path) storage.ref(f.path).delete().catch(e=>{});
-                userData.fotos.splice(i,1); if(currentUser) db.collection('users').doc(currentUser.uid).set({fotos: userData.fotos}, {merge:true}).catch(e=>{});
+                userData.fotos.splice(i,1); 
+                if(currentUser) db.collection('users').doc(currentUser.uid).set({fotos: userData.fotos}, {merge:true}).catch(e=>{});
                 renderFotos(); showToast("✅ Foto borrada");
             }
         };
@@ -669,7 +695,10 @@
             const i = document.getElementById('chatInput'); const m = i.value; if(!m) return;
             i.value = ''; userData.chat.push({role:'user', content:m}); renderChat();
             const r = await llamarIA(`Contexto patología: ${userData.perfil.patologias}. Pregunta: ${m}`); 
-            if(r) { userData.chat.push({role:'assistant', content:r}); renderChat(); if(currentUser) db.collection('users').doc(currentUser.uid).set({chat: userData.chat}, {merge:true}).catch(e=>{}); }
+            if(r) { 
+                userData.chat.push({role:'assistant', content:r}); renderChat(); 
+                if(currentUser) db.collection('users').doc(currentUser.uid).set({chat: userData.chat}, {merge:true}).catch(e=>{}); 
+            }
         };
 
         document.getElementById('btnGenerarConsejos').onclick = async () => {

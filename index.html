@@ -72,7 +72,7 @@
         .btn {
             background: #39FF14; color: #000; border: none; padding: 12px 20px;
             border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%;
-            transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: 0.3s; display: flex; align-items: center; justify-content: gap: 8px;
             margin-top: 10px;
         }
         .btn:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -637,7 +637,7 @@
             renderCardio(); showToast("✅ Cardio guardado");
         };
 
-        // 🌟 SISTEMA BLINDADO DE SUBIDA DE FOTOS PARA IPHONE
+        // 🌟 SISTEMA BLINDADO DE SUBIDA DE FOTOS PARA IPHONE (CON STORAGE ILIMITADO)
         document.getElementById('btnSubirFoto').onclick = () => {
             const fileInput = document.getElementById('fotoInput'); 
             const fecha = document.getElementById('fechaFoto').value;

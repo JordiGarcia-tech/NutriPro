@@ -15,36 +15,28 @@
     <style>
         :root {
             --color-primary: #111827; --color-accent: #39FF14;
-            --color-bg: #020617; --color-card: rgba(15, 23, 42, 0.65);
-            --color-border: rgba(255, 255, 255, 0.08); --color-text: #E5E7EB;
-            --radius: 16px;
+            --color-bg: #020617; --color-card: rgba(10,16,32,0.92);
+            --color-border: rgba(148,163,184,0.3); --color-text: #E5E7EB;
+            --radius: 14px;
         }
         * { box-sizing: border-box; }
         body {
-            margin: 0; font-family: system-ui, -apple-system, sans-serif;
-            background: radial-gradient(circle at 50% -20%, #1e293b, #020617);
+            margin: 0; font-family: system-ui, sans-serif;
+            background: radial-gradient(circle at 50% 100%, #0f172a, #020617);
             color: var(--color-text); min-height: 100vh;
             -webkit-tap-highlight-color: transparent;
         }
-
-        /* ── ANIMACIONES GLOBALES ── */
-        @keyframes slideUpFade {
-            0% { opacity: 0; transform: translateY(20px) scale(0.98); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        .spin { display: inline-block; animation: spin 1.2s linear infinite; }
 
         /* ── PANTALLA DE BIENVENIDA (SPLASH SCREEN) ── */
         #splashScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #020617; z-index: 10000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.4s ease-out;
+            transition: opacity 0.3s ease;
         }
         .splash-logo {
             color: #39FF14; font-size: 3.5rem; margin: 0; 
-            text-shadow: 0 0 25px rgba(57,255,20,0.5);
+            text-shadow: 0 0 20px rgba(57,255,20,0.6);
             animation: pulse 1.5s infinite ease-in-out;
         }
         .splash-sub { color: #94a3b8; font-size: 0.9rem; margin-top: 10px; letter-spacing: 1px; }
@@ -56,115 +48,98 @@
             display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: 90%; max-width: 400px;
         }
         .toast {
-            background: rgba(15, 23, 42, 0.85); border: 1px solid var(--color-border); color: white;
-            padding: 12px 20px; border-radius: 12px; font-size: 0.9rem; font-weight: bold;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); text-align: center;
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, fadeOut 0.5s ease 2.5s forwards;
+            background: rgba(15, 23, 42, 0.95); border: 1px solid #334155; color: white;
+            padding: 12px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: bold;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); text-align: center;
+            animation: slideDown 0.3s ease forwards, fadeOut 0.5s ease 2.5s forwards;
         }
         .toast.success { border-left: 4px solid #39FF14; }
         .toast.error { border-left: 4px solid #ef4444; }
         .toast.warning { border-left: 4px solid #f59e0b; }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-30px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        @keyframes fadeOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.9); } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
 
-        /* ── LOGIN Y APP ── */
+        /* ── LOGIN ── */
         #loginScreen { display: none; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
         #mainApp { display: none; max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 100px; }
 
-        /* ── TARJETAS EFECTO CRISTAL ── */
+        /* ── TARJETAS Y BOTONES ── */
         .card {
             background: var(--color-card); border: 1px solid var(--color-border);
             border-radius: var(--radius); padding: 20px; margin-bottom: 15px;
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s ease;
+            backdrop-filter: blur(10px);
         }
-        
-        /* ── BOTONES INTERACTIVOS ── */
         .btn {
-            background: #39FF14; color: #000; border: none; padding: 14px 20px;
-            border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; justify-content: center; gap: 8px;
-            margin-top: 10px; font-size: 0.95rem; box-shadow: 0 4px 15px rgba(57, 255, 20, 0.2);
+            background: #39FF14; color: #000; border: none; padding: 12px 20px;
+            border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%;
+            transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;
+            margin-top: 10px;
         }
-        .btn:active { transform: scale(0.96); box-shadow: 0 2px 5px rgba(57, 255, 20, 0.1); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; filter: grayscale(1); }
-        .btn-secundario { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(148,163,184,0.3); color: #e5e7eb; box-shadow: none; }
-        .btn-small { width: auto; padding: 8px 14px; font-size: 0.8rem; background: rgba(57,255,20,0.1); color: #39FF14; border: 1px solid rgba(57,255,20,0.3); border-radius: 8px; cursor: pointer; transition: 0.2s; }
-        .btn-small:active { transform: scale(0.9); }
-        .btn-yt { background: #ff0000 !important; color: white !important; padding: 6px 10px; border-radius: 6px; text-decoration: none; font-size: 0.75rem; display: inline-block; font-weight: bold; border:none; white-space: nowrap; transition: 0.2s; }
-        .btn-yt:active { transform: scale(0.95); }
-        .btn-rojo { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-secundario { background: rgba(10,20,45,0.96); border: 1px solid rgba(148,163,184,0.7); color: #9ca3b8; }
+        .btn-small { width: auto; padding: 6px 12px; font-size: 0.75rem; background: rgba(57,255,20,0.2); color: #39FF14; border: 1px solid #39FF14; border-radius: 8px; cursor: pointer; }
+        .btn-yt { background: #ff0000 !important; color: white !important; padding: 6px 10px; border-radius: 6px; text-decoration: none; font-size: 0.75rem; display: inline-block; font-weight: bold; border:none; white-space: nowrap; }
+        .btn-rojo { background: #ef4444; color: white; border: none; }
 
         /* ── INPUTS ── */
         input, select, textarea {
-            width: 100%; padding: 14px; border-radius: 10px; border: 1px solid rgba(148, 163, 184, 0.2);
-            background: rgba(2, 6, 23, 0.6); color: white; margin-bottom: 12px; font-size: 0.95rem; outline: none;
-            transition: all 0.3s ease;
+            width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #334155;
+            background: #0f172a; color: white; margin-bottom: 10px; font-size: 0.95rem; outline: none;
         }
-        input:focus, select:focus, textarea:focus { border-color: #39FF14; background: rgba(15, 23, 42, 0.8); box-shadow: 0 0 0 2px rgba(57, 255, 20, 0.1); }
-        label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: #94a3b8; font-weight: 500; }
+        input:focus, select:focus, textarea:focus { border-color: #39FF14; }
+        label { display: block; margin-bottom: 5px; font-size: 0.85rem; color: #94a3b8; margin-top: 10px; }
 
         /* ── MENÚ INFERIOR TIPO APP NATIVA ── */
         .bottom-nav { 
             position: fixed; bottom: 0; left: 0; width: 100%; 
-            background: rgba(15, 23, 42, 0.85); border-top: 1px solid rgba(255,255,255,0.05); 
-            display: flex; justify-content: space-around; padding: 12px 5px 20px 5px; 
-            z-index: 1000; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            overflow-x: auto; scrollbar-width: none;
+            background: #0f172a; border-top: 1px solid #334155; 
+            display: flex; justify-content: space-around; padding: 10px 5px; 
+            z-index: 1000; backdrop-filter: blur(15px); overflow-x: auto; scrollbar-width: none;
         }
         .bottom-nav::-webkit-scrollbar { display: none; }
         .tab-btn {
             flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: transparent; border: none; color: #64748b; cursor: pointer; font-size: 0.7rem; font-weight: 600;
-            padding: 8px 10px; border-radius: 14px; min-width: 65px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: transparent; border: none; color: #94a3b8; cursor: pointer; font-size: 0.7rem; font-weight: 600;
+            padding: 8px 12px; border-radius: 12px; min-width: 70px;
         }
-        .tab-btn span { font-size: 1.5rem; margin-bottom: 5px; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); filter: grayscale(1); opacity: 0.7;}
+        .tab-btn span { font-size: 1.4rem; margin-bottom: 4px; transition: 0.3s; }
         .tab-btn.active { color: #39FF14; background: rgba(57,255,20,0.08); }
-        .tab-btn.active span { transform: scale(1.2) translateY(-2px); filter: grayscale(0); opacity: 1; }
-        .tab-btn:active { transform: scale(0.9); }
+        .tab-btn.active span { transform: scale(1.15); }
 
         .seccion { display: none; }
-        .seccion.activa { display: block; animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .seccion.activa { display: block; animation: fadeIn 0.3s ease; }
 
         /* ── MACROS CON BARRAS DE PROGRESO ── */
         .resumen-card {
-            margin-top: 15px; border-radius: 14px; border: 1px solid rgba(57,255,20,0.15);
-            background: linear-gradient(135deg, rgba(57,255,20,0.05), rgba(15,23,42,0.6));
-            padding: 18px; font-size: 0.85rem;
+            margin-top: 10px; border-radius: 12px; border: 1px solid rgba(191,219,254,0.45);
+            background: linear-gradient(135deg, rgba(57,255,20,0.10), rgba(15,23,42,0.98));
+            padding: 15px; font-size: 0.85rem;
         }
-        .macro-item { margin-bottom: 14px; }
-        .resumen-linea { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+        .macro-item { margin-bottom: 12px; }
+        .resumen-linea { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
         .resumen-linea span:last-child { font-weight: bold; color: white; }
         
-        .macro-bar { width: 100%; height: 8px; background: rgba(0,0,0,0.3); border-radius: 6px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); }
-        .macro-fill { height: 100%; border-radius: 6px; transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1); position: relative; }
-        /* Efecto de brillo en las barras */
-        .macro-fill::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%); animation: shimmer 2s infinite; }
-        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        .macro-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+        .macro-fill { height: 100%; border-radius: 4px; transition: width 1s ease-in-out; }
+        .fill-kcal { background: #ef4444; width: 100%; }
+        .fill-protes { background: #3b82f6; }
+        .fill-grasas { background: #eab308; }
+        .fill-carbos { background: #39FF14; }
 
-        .fill-kcal { background: linear-gradient(90deg, #dc2626, #ef4444); width: 100%; box-shadow: 0 0 10px rgba(239,68,68,0.4); }
-        .fill-protes { background: linear-gradient(90deg, #2563eb, #3b82f6); box-shadow: 0 0 10px rgba(59,130,246,0.4); }
-        .fill-grasas { background: linear-gradient(90deg, #ca8a04, #eab308); box-shadow: 0 0 10px rgba(234,179,8,0.4); }
-        .fill-carbos { background: linear-gradient(90deg, #16a34a, #39FF14); box-shadow: 0 0 10px rgba(57,255,20,0.4); }
-
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
 
         /* ── VISTA DE PERFIL (SOLO LECTURA) ── */
-        .info-box { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); padding: 14px; border-radius: 10px; margin-bottom: 12px; transition: transform 0.2s; }
-        .info-box:active { transform: scale(0.98); }
-        .info-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: bold; }
-        .info-value { font-size: 1.05rem; color: #f8fafc; font-weight: 600; }
+        .info-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(148,163,184,0.1); padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        .info-label { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .info-value { font-size: 1rem; color: white; font-weight: 600; }
 
         /* ── TABLAS Y LISTAS ── */
-        .excel-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 15px; font-size: 0.85rem; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
-        .excel-table th { background: rgba(30,41,59,0.8); color: #39FF14; padding: 14px 10px; text-align: left; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
-        .excel-table td { padding: 14px 10px; background: rgba(15,23,42,0.4); border-top: 1px solid rgba(255,255,255,0.05); color: #e5e7eb; vertical-align: middle; }
-        .comida-box { border-left: 4px solid #39FF14; padding-left: 15px; margin-bottom: 20px; background: linear-gradient(90deg, rgba(57,255,20,0.05) 0%, rgba(0,0,0,0) 100%); padding: 16px; border-radius: 0 12px 12px 0; transition: transform 0.2s; }
-        .comida-box:hover { transform: translateX(5px); }
-        .foto-item { border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2); margin-bottom: 10px; padding: 14px; font-size: 0.9rem; transition: transform 0.2s; }
+        .excel-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; background: rgba(255,255,255,0.02); }
+        .excel-table th { background: #1e293b; color: #39FF14; padding: 12px 10px; border: 1px solid #334155; text-align: left; }
+        .excel-table td { padding: 12px 10px; border: 1px solid #334155; color: #e5e7eb; vertical-align: middle; }
+        .comida-box { border-left: 4px solid #39FF14; padding-left: 15px; margin-bottom: 20px; background: rgba(57,255,20,0.03); padding: 12px; border-radius: 0 10px 10px 0; }
+        .foto-item { border-radius: 8px; border: 1px solid rgba(148,163,184,0.3); background: rgba(15,23,42,0.8); margin-bottom: 8px; padding: 10px; font-size: 0.85rem; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -179,29 +154,26 @@
     <div id="toast-container"></div>
 
     <div id="loginScreen">
-        <div class="card" style="width:100%; max-width:350px; text-align:center; padding: 30px 20px;">
-            <h1 style="color:#39FF14; margin-bottom: 5px; font-size: 2.5rem;">NutriPro</h1>
-            <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 25px;">Acceso Seguro</p>
+        <div class="card" style="width:100%; max-width:350px; text-align:center;">
+            <h1 style="color:#39FF14; margin-bottom: 5px;">NutriPro</h1>
+            <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 20px;">Acceso Seguro</p>
             
             <div id="loginForm">
                 <input id="authEmail" type="email" placeholder="Correo electrónico" autocomplete="username">
                 <input id="authPass" type="password" placeholder="Contraseña" autocomplete="current-password">
-                <button class="btn" id="btnLogin" onclick="haptic()">Iniciar Sesión</button>
-                <button class="btn btn-secundario" id="btnRegister" onclick="haptic()">Crear Cuenta</button>
+                <button class="btn" id="btnLogin">Iniciar Sesión</button>
+                <button class="btn btn-secundario" id="btnRegister">Crear Cuenta</button>
             </div>
         </div>
     </div>
 
     <div id="mainApp">
         <header class="card" style="padding-bottom: 10px;">
-            <h2 style="margin:0; font-size: 1.6rem;">Hola, <span id="userNombre" style="color: #39FF14;">...</span></h2>
-            <div id="imcDisplay" style="font-size:0.85rem; color:#94a3b8; margin-top:4px;">Tu panel de control de salud</div>
+            <h2 style="margin:0">Hola, <span id="userNombre">...</span></h2>
+            <div id="imcDisplay" style="font-size:0.85rem; color:#39FF14; font-weight: bold; margin-top:4px;"></div>
             
             <div class="resumen-card">
-                <h3 style="margin-top:0; margin-bottom:15px; color:white; display:flex; justify-content:space-between; align-items:center;">
-                    Tus Macros Diarios
-                    <span style="font-size: 0.75rem; font-weight:normal; color:#64748b; background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 8px;">📊 Info</span>
-                </h3>
+                <h3 style="margin-top:0; margin-bottom:15px; color:white;">Tus Macros Diarios</h3>
                 <div class="macro-item"><div class="resumen-linea"><span>🔥 Calorías</span><span id="resumenKcal" style="color:#ef4444;">--</span></div><div class="macro-bar"><div class="macro-fill fill-kcal"></div></div></div>
                 <div class="macro-item"><div class="resumen-linea"><span>🥩 Proteínas</span><span id="resumenProteinas" style="color:#3b82f6;">--</span></div><div class="macro-bar"><div class="macro-fill fill-protes" id="barProtes" style="width:0%;"></div></div></div>
                 <div class="macro-item"><div class="resumen-linea"><span>🥑 Grasas</span><span id="resumenGrasas" style="color:#eab308;">--</span></div><div class="macro-bar"><div class="macro-fill fill-grasas" id="barGrasas" style="width:0%;"></div></div></div>
@@ -213,7 +185,7 @@
         <main class="contenido">
             
             <section id="perfil" class="seccion activa">
-                <h2 style="margin-top:0; display:flex; align-items:center; gap:10px;">👤 Mi Perfil</h2>
+                <h2 style="margin-top:0;">Mi Perfil</h2>
                 
                 <div class="card" id="perfilViewMode" style="display:none;">
                     <div class="info-box"><div class="info-label">Nombre</div><div class="info-value" id="viewNombre">--</div></div>
@@ -227,8 +199,8 @@
                     <div class="info-box"><div class="info-label">Alergias / No gustan</div><div class="info-value" id="viewNoGustan" style="color:#fbbf24;">--</div></div>
                     <div class="info-box"><div class="info-label">Patologías</div><div class="info-value" id="viewPatologias" style="color:#ef4444;">--</div></div>
                     <div class="info-box"><div class="info-label">IA de Nutrición</div><div class="info-value" id="viewApiKey">--</div></div>
-                    <button class="btn btn-secundario" id="btnEditarPerfil" onclick="haptic()" style="color:white; border-color:rgba(59,130,246,0.5); margin-top:15px;">✏️ Modificar mis datos</button>
-                    <button class="btn" id="btnInstalarApp" onclick="haptic()" style="background:linear-gradient(90deg, #2563eb, #3b82f6); color:white; display:none; margin-top: 15px;">📱 Instalar App en el móvil</button>
+                    <button class="btn btn-secundario" id="btnEditarPerfil" style="color:white; border-color:#3b82f6; margin-top:10px;">✏️ Modificar Datos</button>
+                    <button class="btn" id="btnInstalarApp" style="background:#3b82f6; color:white; display:none; margin-top: 15px;">📱 Instalar App en el móvil</button>
                 </div>
 
                 <div class="card" id="perfilEditMode">
@@ -246,133 +218,119 @@
                     <label>No gustan / Alergias</label><input id="noGustan" type="text" placeholder="Ej: Pescado, tomate...">
                     <label>Patologías / Lesiones</label><textarea id="patologias" rows="2" placeholder="Ej: Lesión hombro..."></textarea>
                     
-                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; margin-top: 20px; border: 1px solid rgba(57,255,20,0.2);">
-                        <h3 style="color:#39FF14; margin-top:0; margin-bottom:10px; font-size: 1rem; display:flex; align-items:center; gap:8px;">🧠 Cerebro de IA (Groq)</h3>
-                        <input id="apiKey" type="password" placeholder="Pega aquí tu clave (gsk_...)" style="margin-bottom:0;">
-                        <div style="font-size:0.8rem; color:#94a3b8; line-height:1.5; margin-top:10px;">
-                            Entra en <a href="https://console.groq.com/keys" target="_blank" style="color:#39FF14; text-decoration:none; font-weight:bold;">console.groq.com/keys</a>, copia la clave secreta y pégala arriba. Se guardará de forma segura.
-                        </div>
+                    <h3 style="color:#39FF14; margin-top:20px; margin-bottom:5px;">API IA (Groq)</h3>
+                    <input id="apiKey" type="password" placeholder="Pega aquí tu clave (gsk_...)">
+                    
+                    <div style="font-size:0.85rem; color:#9CA3AF; line-height:1.6; background:rgba(15,23,42,0.5); padding:12px; border-radius:8px; border:1px solid rgba(148,163,184,0.2); margin-top:10px; margin-bottom:15px;">
+                        🔑 <strong>¿Cómo obtener tu clave gratuita?</strong><br>
+                        1. Entra en <a href="https://console.groq.com/keys" target="_blank" style="color:#39FF14; text-decoration:underline;">console.groq.com/keys</a><br>
+                        2. Inicia sesión o regístrate y pulsa "Create API Key".<br>
+                        3. Copia la clave (empieza por <em>gsk_</em>) y pégala aquí.
                     </div>
                     
-                    <button class="btn" id="btnGuardarPerfil" onclick="haptic()" style="margin-top: 20px;">💾 Guardar Perfil Seguro</button>
+                    <button class="btn" id="btnGuardarPerfil">💾 Guardar Perfil</button>
                 </div>
-                <button class="btn btn-secundario" id="btnLogout" onclick="haptic()" style="border-color:rgba(239,68,68,0.3); color:#ef4444; margin-top:15px; background:rgba(239,68,68,0.05);">Cerrar Sesión</button>
+                <button class="btn btn-secundario" id="btnLogout" style="border-color:#ef4444; color:#ef4444; margin-top:15px;">Cerrar Sesión</button>
             </section>
 
             <section id="menu" class="seccion">
-                <h2 style="margin-top:0; display:flex; align-items:center; gap:10px;">🍽️ Plan Nutricional</h2>
+                <h2 style="margin-top:0;">Plan Nutricional</h2>
                 <div class="card" style="padding:15px; margin-bottom: 15px;">
                     <div class="grid-2">
-                        <div><label style="margin-top:0;">Tiempo de cocina</label><select id="filtroTiempo"><option value="normal">Normal</option><option value="expres">⚡ Exprés (Rápido)</option></select></div>
-                        <div><label style="margin-top:0;">Presupuesto</label><select id="filtroPrecio"><option value="normal">Normal</option><option value="lowcost">💶 Low Cost (Barato)</option></select></div>
+                        <div><label style="margin-top:0;">Tiempo</label><select id="filtroTiempo"><option value="normal">Normal</option><option value="expres">⚡ Exprés</option></select></div>
+                        <div><label style="margin-top:0;">Presupuesto</label><select id="filtroPrecio"><option value="normal">Normal</option><option value="lowcost">💶 Low Cost</option></select></div>
                     </div>
-                    <button class="btn" id="btnGenerarTodo" onclick="haptic()" style="margin-top: 15px;">✨ Generar Menú con IA</button>
+                    <button class="btn" id="btnGenerarTodo" style="margin-top: 15px;">Generar Menú Completo</button>
                 </div>
                 
-                <div id="contenedorMenu" class="card" style="padding:20px; background:#020617; border: 1px solid rgba(57,255,20,0.1);">
-                    <div id="comida_desayuno" class="comida-box"><div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0; color:white;">🌅 Desayuno</h3><button class="btn-small no-print" onclick="haptic(); cambiarComida('desayuno')">🔄 Cambiar</button></div><div class="comida-detalle" style="margin-top:12px; font-size:0.95rem; line-height:1.6; color:#cbd5e1;">El menú aparecerá aquí...</div></div>
-                    <div id="comida_comida" class="comida-box"><div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0; color:white;">🍽️ Comida</h3><button class="btn-small no-print" onclick="haptic(); cambiarComida('comida')">🔄 Cambiar</button></div><div class="comida-detalle" style="margin-top:12px; font-size:0.95rem; line-height:1.6; color:#cbd5e1;">--</div></div>
-                    <div id="comida_merienda" class="comida-box"><div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0; color:white;">🍎 Merienda</h3><button class="btn-small no-print" onclick="haptic(); cambiarComida('merienda')">🔄 Cambiar</button></div><div class="comida-detalle" style="margin-top:12px; font-size:0.95rem; line-height:1.6; color:#cbd5e1;">--</div></div>
-                    <div id="comida_cena" class="comida-box"><div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0; color:white;">🌙 Cena</h3><button class="btn-small no-print" onclick="haptic(); cambiarComida('cena')">🔄 Cambiar</button></div><div class="comida-detalle" style="margin-top:12px; font-size:0.95rem; line-height:1.6; color:#cbd5e1;">--</div></div>
+                <div id="contenedorMenu" class="card" style="padding:20px; background:#020617;">
+                    <div id="comida_desayuno" class="comida-box"><div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0; color:white;">🌅 Desayuno</h3><button class="btn-small no-print" onclick="cambiarComida('desayuno')">🔄</button></div><div class="comida-detalle" style="margin-top:10px; font-size:0.9rem; line-height:1.5;">El menú aparecerá aquí...</div></div>
+                    <div id="comida_comida" class="comida-box"><div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0; color:white;">🍽️ Comida</h3><button class="btn-small no-print" onclick="cambiarComida('comida')">🔄</button></div><div class="comida-detalle" style="margin-top:10px; font-size:0.9rem; line-height:1.5;">--</div></div>
+                    <div id="comida_merienda" class="comida-box"><div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0; color:white;">🍎 Merienda</h3><button class="btn-small no-print" onclick="cambiarComida('merienda')">🔄</button></div><div class="comida-detalle" style="margin-top:10px; font-size:0.9rem; line-height:1.5;">--</div></div>
+                    <div id="comida_cena" class="comida-box"><div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0; color:white;">🌙 Cena</h3><button class="btn-small no-print" onclick="cambiarComida('cena')">🔄</button></div><div class="comida-detalle" style="margin-top:10px; font-size:0.9rem; line-height:1.5;">--</div></div>
                 </div>
 
-                <div id="contenedorListaCompra" class="card" style="display:none; border-color: rgba(234,179,8,0.5); background: linear-gradient(135deg, rgba(234,179,8,0.05), rgba(0,0,0,0.5));">
-                    <h3 style="margin-top:0; color:#fde047; display:flex; align-items:center; gap:8px;">🛒 Lista Inteligente (Mercadona)</h3>
-                    <div id="detalleListaCompra" style="font-size:0.95rem; line-height:1.7; color:#e2e8f0;"></div>
+                <div id="contenedorListaCompra" class="card" style="display:none; border-color: #eab308;">
+                    <h3 style="margin-top:0; color:#eab308;">🛒 Lista (Mercadona)</h3>
+                    <div id="detalleListaCompra" style="font-size:0.9rem; line-height:1.6; color:#e5e7eb;"></div>
                 </div>
 
                 <div class="grid-2">
-                    <button class="btn btn-secundario" id="btnDescargarPDF" onclick="haptic()" style="color:white; border-color:rgba(225,29,72,0.5); background:rgba(225,29,72,0.1);">📄 Guardar en PDF</button>
-                    <button class="btn btn-secundario" id="btnListaCompra" onclick="haptic()" style="color:white; border-color:rgba(234,179,8,0.5); background:rgba(234,179,8,0.1);">🛒 Crear Lista Mercadona</button>
+                    <button class="btn btn-secundario" id="btnDescargarPDF" style="color:white; border-color:#E11D48;">📄 Exportar Menú a PDF</button>
+                    <button class="btn btn-secundario" id="btnListaCompra" style="color:white; border-color:#eab308;">🛒 Generar Lista Mercadona</button>
                 </div>
             </section>
 
             <section id="entreno" class="seccion">
-                <h2 style="margin-top:0; display:flex; align-items:center; gap:10px;">💪 Rutina Científica</h2>
+                <h2 style="margin-top:0;">Rutina Científica</h2>
                 <div class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
-                        <span style="font-size:0.85rem; color:#9CA3AF">Frecuencia optimizada para <strong id="diasEntrenoLabel" style="color:white;">--</strong>.</span>
-                    </div>
-                    <label>Tu nivel actual</label>
-                    <select id="nivelEntreno"><option value="principiante">Principiante</option><option value="intermedio" selected>Intermedio</option><option value="avanzado">Avanzado</option></select>
-                    <button class="btn" id="btnGenerarEntreno" onclick="haptic()">✨ Generar Rutina Óptima</button>
+                    <p style="font-size:0.85rem; color:#9CA3AF">Frecuencia 2 para <strong id="diasEntrenoLabel" style="color:white;">--</strong>.</p>
+                    <select id="nivelEntreno"><option value="principiante">Principiante</option><option value="intermedio">Intermedio</option><option value="avanzado">Avanzado</option></select>
+                    <button class="btn" id="btnGenerarEntreno">Generar Rutina Óptima</button>
                 </div>
-                <div id="contenedorEntrenoPdf" style="background:rgba(2,6,23,0.5); padding:10px; border-radius:14px; border: 1px solid rgba(255,255,255,0.05);">
+                <div id="contenedorEntrenoPdf" style="background:#020617; padding:5px; border-radius:10px;">
                     <div id="resultadoEntreno" style="display:none; overflow-x: auto; padding-bottom: 10px;"></div>
                 </div>
-                <button class="btn btn-secundario" id="btnDescargarPDFEntreno" onclick="haptic()" style="color:white; border-color:rgba(59,130,246,0.5); background:rgba(59,130,246,0.1); display:none; margin-top:15px;">📄 Guardar Rutina en PDF</button>
+                <button class="btn btn-secundario" id="btnDescargarPDFEntreno" style="color:white; border-color:#3b82f6; display:none; margin-top:15px;">📄 Exportar Rutina a PDF</button>
             </section>
 
             <section id="cardio" class="seccion">
-                <h2 style="margin-top:0; display:flex; align-items:center; gap:10px;">🏃 Registro de Cardio</h2>
+                <h2 style="margin-top:0;">Registro de Cardio</h2>
                 <div class="card">
-                    <label>Tipo de Ejercicio</label>
-                    <select id="tipoCardio"><option value="Andar">🚶 Andar</option><option value="Correr">🏃 Correr</option><option value="Bici">🚴 Bicicleta</option><option value="Eliptica">⛷️ Elíptica</option><option value="Nadar">🏊 Natación</option></select>
+                    <select id="tipoCardio"><option value="Andar">🚶 Andar</option><option value="Correr">🏃 Correr</option><option value="Bici">🚴 Bicicleta</option></select>
                     <div class="grid-2">
-                        <div><label>Distancia (Km)</label><input id="kmCardio" type="number" step="0.1" placeholder="Ej: 5.2"></div>
-                        <div><label>Tiempo (Minutos)</label><input id="tiempoCardio" type="number" placeholder="Ej: 45"></div>
+                        <div><label>Km</label><input id="kmCardio" type="number" step="0.1"></div>
+                        <div><label>Minutos</label><input id="tiempoCardio" type="number"></div>
                     </div>
-                    <label>Pulsaciones Medias (Opcional)</label>
-                    <input id="pulsacionesCardio" type="number" placeholder="Ej: 135">
-                    <button class="btn" id="btnAddCardio" onclick="haptic()">💾 Añadir al Historial</button>
+                    <label>Pulsaciones Medias (Opcional)</label><input id="pulsacionesCardio" type="number" placeholder="Ej: 140">
+                    <button class="btn" id="btnAddCardio">Guardar Sesión</button>
                 </div>
-                <h3 style="font-size:1.1rem; margin-bottom:10px; padding-left:5px;">Historial Reciente</h3>
-                <div id="listaCardio" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                <div id="listaCardio" class="card"></div>
             </section>
 
             <section id="progreso" class="seccion">
-                <h2 style="margin-top:0; display:flex; align-items:center; gap:10px;">📈 Evolución de Peso</h2>
+                <h2 style="margin-top:0;">Evolución de Peso</h2>
                 <div class="card">
-                    <label>Añadir nuevo pesaje</label>
                     <div style="display:flex; gap:10px;">
-                        <input type="number" id="pesoHoy" placeholder="Tu peso hoy en kg" step="0.1" style="margin:0; flex-grow:1;">
-                        <button class="btn" id="btnAddPeso" onclick="haptic()" style="margin:0; width:auto; padding:0 25px;">Guardar</button>
+                        <input type="number" id="pesoHoy" placeholder="kg" step="0.1" style="margin:0;">
+                        <button class="btn" id="btnAddPeso" style="margin:0; width:auto; padding:0 20px;">Guardar</button>
                     </div>
-                    <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 10px; margin-top: 20px;">
-                        <canvas id="graficaPeso" width="400" height="200" style="display:none;"></canvas>
-                    </div>
+                    <canvas id="graficaPeso" width="400" height="200" style="margin-top:20px; display:none;"></canvas>
                 </div>
-                <h3 style="font-size:1.1rem; margin-bottom:10px; padding-left:5px;">Historial de Pesajes</h3>
-                <div id="listaProgresos" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                <div id="listaProgresos" class="card"></div>
             </section>
 
             <section id="fotos" class="seccion">
-                <h2 style="margin-top:0; display:flex; align-items:center; gap:10px;">📸 Evolución Física</h2>
+                <h2 class="titulo-seccion">📸 Fotos de Progreso</h2>
                 <div class="card">
-                    <label>Añadir nueva foto</label>
                     <div class="grid-2">
-                        <input type="file" id="fotoInput" accept="image/jpeg, image/png, image/jpg" style="padding:10px; background: rgba(255,255,255,0.05);">
+                        <input type="file" id="fotoInput" accept="image/jpeg, image/png, image/jpg" style="padding:8px;">
                         <input type="date" id="fechaFoto">
                     </div>
-                    <button class="btn" id="btnSubirFoto" onclick="haptic()">☁️ Subir a la Nube Segura</button>
+                    <button class="btn" id="btnSubirFoto">Subir a la Nube Segura</button>
                 </div>
                 <div class="card">
-                    <h3 style="margin-top:0; display:flex; align-items:center; gap:8px;">🖼️ Galería Personal</h3>
-                    <div id="galeriaFotos" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; margin-top: 15px;"></div>
+                    <h3 style="margin-top:0;">Mi Galería</h3>
+                    <div id="galeriaFotos" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-top: 15px;"></div>
                 </div>
             </section>
 
             <section id="consejos" class="seccion">
-                <h2 style="margin-top:0; display:flex; align-items:center; gap:10px;">💡 Salud y Tips</h2>
+                <h2 style="margin-top:0;">💡 Consejos y Salud</h2>
                 <div class="card">
-                    <div style="display:flex; align-items:flex-start; gap:15px; margin-bottom: 20px;">
-                        <div style="font-size: 2.5rem;">🩺</div>
-                        <p style="font-size:0.9rem; color:#cbd5e1; margin:0; line-height: 1.5;">El asistente analizará tu perfil, objetivos y patologías para generarte recomendaciones personalizadas de hábitos diarios y suplementación.</p>
-                    </div>
-                    <button class="btn" id="btnGenerarConsejos" onclick="haptic()">✨ Obtener Diagnóstico IA</button>
-                    <div id="resultadoConsejos" style="margin-top:20px; font-size:0.95rem; line-height:1.7; display:none; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border-left: 4px solid #39FF14;"></div>
+                    <p style="font-size:0.85rem; color:#9CA3AF">Análisis personalizado para tus patologías.</p>
+                    <button class="btn" id="btnGenerarConsejos">Generar Pautas</button>
+                    <div id="resultadoConsejos" style="margin-top:15px; font-size:0.95rem; line-height:1.6; display:none;"></div>
                 </div>
             </section>
 
             <section id="chat" class="seccion">
-                <h2 style="margin-top:0; display:flex; align-items:center; gap:10px;">🤖 Asistente Personal</h2>
-                <div class="card" style="padding: 15px;">
-                    <div id="chatMensajes" style="height:350px; overflow-y:auto; border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:15px; margin-bottom:15px; font-size:0.95rem; background: rgba(0,0,0,0.3); scroll-behavior: smooth;">
-                        <div style="text-align:left; margin-bottom:15px;"><span style="background:rgba(30,41,59,0.8); color:#e2e8f0; padding:10px 14px; border-radius:14px 14px 14px 2px; display:inline-block; border: 1px solid rgba(255,255,255,0.05);">¡Hola! Soy tu asistente personal integrado. Conozco tus macros y tus patologías. ¿En qué te ayudo hoy?</span></div>
-                    </div>
-                    <div style="display:flex; gap:10px;">
-                        <input type="text" id="chatInput" placeholder="Pregunta sobre nutrición..." style="margin:0; flex-grow:1; border-radius: 20px; padding-left: 20px;">
-                        <button class="btn" id="btnChat" onclick="haptic()" style="margin:0; width:auto; padding:0 20px; border-radius: 20px;">Enviar</button>
+                <h2 style="margin-top:0;">🤖 Asistente Virtual</h2>
+                <div class="card">
+                    <div id="chatMensajes" style="height:300px; overflow-y:auto; border:1px solid rgba(148,163,184,0.2); border-radius:8px; padding:10px; margin-bottom:10px; font-size:0.9rem;"></div>
+                    <div style="display:flex; gap:8px;">
+                        <input type="text" id="chatInput" placeholder="Escribe tu pregunta..." style="margin:0;">
+                        <button class="btn" id="btnChat" style="margin:0; width:auto; padding:0 20px;">Enviar</button>
                     </div>
                 </div>
             </section>
@@ -396,9 +354,6 @@
     <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-storage-compat.js"></script>
 
     <script>
-        // FUNCIÓN HÁPTICA GLOBAL PARA MEJORAR LA SENSACIÓN
-        function haptic() { if (window.navigator && window.navigator.vibrate) { navigator.vibrate(30); } }
-
         const firebaseConfig = {
             apiKey: "AIzaSyCy3CbLRZVz4Tti5_jCCJaRAcaJLo27YN4",
             authDomain: "nutricion-jordigarcia.firebaseapp.com",
@@ -420,7 +375,6 @@
         let chartPeso = null;
 
         function showToast(m, t = 'success') {
-            haptic();
             const c = document.getElementById('toast-container');
             const d = document.createElement('div');
             d.className = `toast ${t}`; d.innerText = m;
@@ -438,7 +392,6 @@
         if (isIos() && !isInStandaloneMode()) { document.getElementById('btnInstalarApp').style.display = 'block'; }
 
         document.getElementById('btnInstalarApp').onclick = async () => {
-            haptic();
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 const { outcome } = await deferredPrompt.userChoice;
@@ -467,8 +420,9 @@
                 document.getElementById('viewNoGustan').innerText = userData.perfil.noGustan || 'Ninguna alergia';
                 document.getElementById('viewPatologias').innerText = userData.perfil.patologias || 'Saludable';
                 
+                // CAMBIO: AHORA LEE LA API KEY DE FIRESTORE, NO DE LOCALSTORAGE
                 const k = userData.perfil.apiKey || document.getElementById('apiKey').value.trim();
-                document.getElementById('viewApiKey').innerHTML = k ? '<span style="color:#39FF14; display:flex; align-items:center; gap:5px;">✅ Conectada</span>' : '<span style="color:#ef4444; display:flex; align-items:center; gap:5px;">❌ Falta API</span>';
+                document.getElementById('viewApiKey').innerHTML = k ? '<span style="color:#39FF14">✅ OK</span>' : '<span style="color:#ef4444">❌ Falta API</span>';
                 document.getElementById('userNombre').innerText = userData.perfil.nombre || 'Usuario';
                 document.getElementById('diasEntrenoLabel').innerText = (userData.perfil.diasEntreno || '3') + " días/semana";
             } catch(e) {}
@@ -476,7 +430,7 @@
 
         function hideSplash() {
             const splash = document.getElementById('splashScreen');
-            if(splash) { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 400); }
+            if(splash) { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 300); }
         }
 
         auth.onAuthStateChanged(async user => {
@@ -500,6 +454,7 @@
                         document.getElementById('noGustan').value = userData.perfil.noGustan || '';
                         document.getElementById('patologias').value = userData.perfil.patologias || '';
                         
+                        // CARGAMOS LA API KEY DESDE LA BASE DE DATOS
                         document.getElementById('apiKey').value = userData.perfil.apiKey || '';
                         
                         if(userData.perfil.edad && userData.perfil.peso) {
@@ -535,7 +490,7 @@
 
         document.getElementById('btnGuardarPerfil').onclick = () => {
             const btn = document.getElementById('btnGuardarPerfil');
-            btn.innerHTML = "<span class='spin'>⏳</span> Guardando..."; btn.disabled = true;
+            btn.innerText = "⏳ Guardando..."; btn.disabled = true;
 
             try {
                 userData.perfil = {
@@ -550,7 +505,7 @@
                     tipoDieta: document.getElementById('tipoDieta').value,
                     noGustan: document.getElementById('noGustan').value,
                     patologias: document.getElementById('patologias').value,
-                    apiKey: document.getElementById('apiKey').value.trim() 
+                    apiKey: document.getElementById('apiKey').value.trim() // GUARDAMOS LA API EN FIRESTORE
                 };
                 
                 if (currentUser) { db.collection('users').doc(currentUser.uid).set({perfil: userData.perfil}, {merge:true}).catch(e=>{}); }
@@ -558,9 +513,9 @@
                 updateProfileView(); calcMacros();
                 document.getElementById('perfilEditMode').style.display = 'none';
                 document.getElementById('perfilViewMode').style.display = 'block';
-                showToast("✅ Perfil guardado con éxito");
+                showToast("✅ Perfil guardado");
             } catch (error) { showToast("❌ Error al guardar", "error");
-            } finally { btn.innerHTML = "💾 Guardar Perfil Seguro"; btn.disabled = false; }
+            } finally { btn.innerText = "💾 Guardar Perfil"; btn.disabled = false; }
         };
 
         function calcMacros() {
@@ -580,6 +535,7 @@
         }
 
         async function llamarIA(p) {
+            // AHORA COGE LA API KEY DE FIREBASE, NO DEL NAVEGADOR
             const k = userData.perfil.apiKey || document.getElementById('apiKey').value.trim();
             
             if(!k) {
@@ -599,18 +555,18 @@
         }
 
         async function cambiarComida(t) {
-            const d = document.querySelector(`#comida_${t} .comida-detalle`); d.innerHTML = "<span class='spin'>⏳</span> Generando receta ideal...";
+            const d = document.querySelector(`#comida_${t} .comida-detalle`); d.innerHTML = "⏳...";
             const k = document.getElementById('resumenKcal').innerText;
             const tiempo = document.getElementById('filtroTiempo').value === 'expres' ? 'MUY RÁPIDA (menos de 15 minutos)' : 'Normal';
             const precio = document.getElementById('filtroPrecio').value === 'lowcost' ? 'ECONÓMICA (ingredientes baratos)' : 'Normal';
             
             const res = await llamarIA(`Dame una opción de ${t} para dieta ${document.getElementById('tipoDieta').value} de ${k}. Restricciones: Evitar ${userData.perfil.noGustan}. Tiempo: ${tiempo}. Presupuesto: ${precio}. Patologia: ${userData.perfil.patologias}. Formato: **[Nombre]** \n- Gramos \n- Pasos.`);
             if(res) {
-                const txt = res.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong style="color:white; font-size:1.05rem;">$1</strong>');
+                const txt = res.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 d.innerHTML = txt; userData.dieta[t] = txt;
                 if(currentUser) db.collection('users').doc(currentUser.uid).set({dieta: userData.dieta}, {merge:true}).catch(e=>{});
             } else {
-                d.innerHTML = "Error al generar. Comprueba tu API Key en el Perfil.";
+                d.innerHTML = "Error al generar. Comprueba tu API Key.";
             }
         }
 
@@ -620,18 +576,310 @@
 
             const b = document.getElementById('btnGenerarTodo'); b.disabled = true;
             const ts = ['desayuno', 'comida', 'merienda', 'cena'];
-            for(let i=0; i<ts.length; i++) { b.innerHTML = `<span class='spin'>⏳</span> Procesando (${i+1}/4)`; await cambiarComida(ts[i]); }
-            b.innerHTML = "✨ Generar Menú con IA"; b.disabled = false;
+            for(let i=0; i<ts.length; i++) { b.innerText = `⏳ (${i+1}/4)`; await cambiarComida(ts[i]); }
+            b.innerText = "Generar Menú Completo del Día"; b.disabled = false;
         };
 
         document.getElementById('btnListaCompra').onclick = async () => {
             const b = document.getElementById('btnListaCompra'); const cont = document.getElementById('detalleListaCompra');
             const menuTxt = document.getElementById('contenedorMenu').innerText;
-            if(menuTxt.includes('--')) return showToast("Genera el menú completo primero", "error");
+            if(menuTxt.includes('--')) return showToast("Genera el menú primero", "error");
             
-            b.disabled = true; b.innerHTML = "<span class='spin'>⏳</span> Calculando..."; document.getElementById('contenedorListaCompra').style.display = 'block'; cont.innerHTML = "Organizando pasillos de Mercadona...";
+            b.disabled = true; b.innerText = "⏳..."; document.getElementById('contenedorListaCompra').style.display = 'block'; cont.innerHTML = "Organizando pasillos...";
             const res = await llamarIA(`Menú: ${menuTxt}. Haz lista de compra Mercadona. AGRUPA POR PASILLOS (Frutería, Lácteos, etc). Recomienda marcas Hacendado/Mercadona. Solo devuelve texto con viñetas agrupado por pasillos.`);
-            if(res) cont.innerHTML = res.replace(/
-http://googleusercontent.com/immersive_entry_chip/0
+            if(res) cont.innerHTML = res.replace(/```html|```/g, '').replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            b.disabled = false; b.innerText = "🛒 Generar Lista Mercadona";
+        };
 
-¿Qué te parece el nuevo aspecto y el tacto al usarla en el móvil?
+        document.getElementById('btnGenerarEntreno').onclick = async () => {
+            const k = userData.perfil.apiKey || document.getElementById('apiKey').value.trim();
+            if(!k) return showToast("⚠️ Guarda tu API Key de Groq en el Perfil primero", "warning");
+
+            const b = document.getElementById('btnGenerarEntreno'); b.disabled = true;
+            const resDiv = document.getElementById('resultadoEntreno');
+            resDiv.style.display = 'block'; resDiv.innerHTML = "<p style='text-align:center'>Analizando evidencia...</p>";
+            document.getElementById('btnDescargarPDFEntreno').style.display = 'none';
+            
+            const d = parseInt(userData.perfil.diasEntreno || '3');
+            let r = d === 4 ? "Torso/Pierna" : (d >= 5 ? "Push/Pull/Legs" : "Full Body");
+            const promptEntreno = `Rutina FUERZA ${d} días. Esquema: ${r}. Nivel: ${document.getElementById('nivelEntreno').value}. Patología: ${userData.perfil.patologias}. Pon entre 6 y 8 ejercicios por día para que dure 1 hora. Devuelve SOLO Tabla HTML class="excel-table". Columnas: Día | Músculo | Ejercicio | Series x Reps | Tutorial. Ejercicio con botón: <button class="btn-small no-print btn-cambiar-ejercicio" data-musculo="MÚSCULO AQUI">🔄</button>. Tutorial: <a class="btn-yt" href="https://www.youtube.com/results?search_query=como+hacer+NOMBRE+gimnasio" target="_blank">▶ Vídeo</a>`;
+            
+            const respuesta = await llamarIA(promptEntreno);
+            if(respuesta) {
+                resDiv.innerHTML = respuesta.replace(/```html|```/g, ''); userData.entrenamiento = resDiv.innerHTML; 
+                if(currentUser) db.collection('users').doc(currentUser.uid).set({entrenamiento: userData.entrenamiento}, {merge:true}).catch(e=>{});
+                document.getElementById('btnDescargarPDFEntreno').style.display = 'block'; showToast("✅ Rutina generada");
+            } else { showToast("❌ Error al generar la rutina", "error"); }
+            b.disabled = false; b.innerText = "Generar Rutina Óptima";
+        };
+
+        document.getElementById('resultadoEntreno').addEventListener('click', async (e) => {
+            const btn = e.target.closest('.btn-cambiar-ejercicio'); if(!btn) return;
+            const tr = btn.closest('tr'); const musculo = btn.getAttribute('data-musculo');
+            btn.innerText = "⏳"; btn.disabled = true;
+            const nuevoEjercicio = await llamarIA(`Dame SOLO el nombre de un ejercicio seguro para ${musculo} diferente. Patología a evitar: ${userData.perfil.patologias}. Sin explicaciones.`);
+            if(nuevoEjercicio) {
+                const nombreLimpio = nuevoEjercicio.replace(/\*\*/g, '').trim();
+                tr.cells[2].innerHTML = `${nombreLimpio} <button class="btn-small no-print btn-cambiar-ejercicio" data-musculo="${musculo}">🔄</button>`;
+                if(tr.cells[4]) tr.cells[4].innerHTML = `<a class="btn-yt" href="https://www.youtube.com/results?search_query=${encodeURIComponent("como hacer "+nombreLimpio+" gimnasio")}" target="_blank">▶ Vídeo</a>`;
+                userData.entrenamiento = document.getElementById('resultadoEntreno').innerHTML;
+                if(currentUser) db.collection('users').doc(currentUser.uid).set({entrenamiento: userData.entrenamiento}, {merge:true}).catch(e=>{});
+                showToast("✅ Ejercicio sustituido");
+            } else { btn.innerText = "🔄"; btn.disabled = false; }
+        });
+
+        function renderProgresos() {
+            const d = document.getElementById('listaProgresos');
+            d.innerHTML = userData.progresos.map(p => `<div class="foto-item">📅 ${p.fecha} - ⚖️ <strong>${p.peso} kg</strong></div>`).join('');
+            if(userData.progresos.length > 0) {
+                document.getElementById('graficaPeso').style.display = 'block'; if(chartPeso) chartPeso.destroy();
+                const rev = [...userData.progresos].reverse();
+                chartPeso = new Chart(document.getElementById('graficaPeso'), { type: 'line', data: { labels: rev.map(x=>x.fecha), datasets: [{label: 'kg', data: rev.map(x=>x.peso), borderColor: '#39FF14', tension: 0.3}] }, options: { plugins: {legend: {display: false}}} });
+            }
+        }
+
+        document.getElementById('btnAddPeso').onclick = () => {
+            const v = document.getElementById('pesoHoy').value; if(!v) return;
+            userData.progresos.unshift({fecha: new Date().toLocaleDateString(), peso: v});
+            userData.perfil.peso = v; document.getElementById('peso').value = v;
+            if(currentUser) db.collection('users').doc(currentUser.uid).set({progresos: userData.progresos, perfil: userData.perfil}, {merge:true}).catch(e=>{});
+            renderProgresos(); updateProfileView(); calcMacros(); document.getElementById('pesoHoy').value = ''; showToast("✅ Peso guardado");
+        };
+
+        function renderCardio() {
+            document.getElementById('listaCardio').innerHTML = userData.cardio.map((c, i) => {
+                let pulso = c.pulsaciones ? `<br>❤️ Media: ${c.pulsaciones} ppm` : '';
+                return `
+                <div class="foto-item" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>📅 ${c.fecha} - <strong>${c.tipo}</strong><br>🏃 ${c.km} km en ⏱️ ${c.t} min ${pulso}</div>
+                    <button class="btn-small btn-rojo" onclick="borrarCardio(${i})" style="margin-left:10px;">🗑️</button>
+                </div>`;
+            }).join('');
+        }
+        
+        window.borrarCardio = i => {
+            if(confirm("¿Borrar esta sesión de cardio?")) {
+                userData.cardio.splice(i, 1); 
+                if(currentUser) db.collection('users').doc(currentUser.uid).set({cardio: userData.cardio}, {merge:true}).catch(e=>{});
+                renderCardio(); 
+                showToast("✅ Sesión borrada");
+            }
+        };
+
+        document.getElementById('btnAddCardio').onclick = () => {
+            const km = document.getElementById('kmCardio').value; if(!km) return;
+            userData.cardio.unshift({tipo: document.getElementById('tipoCardio').value, km: km, t: document.getElementById('tiempoCardio').value, fecha: new Date().toLocaleDateString(), pulsaciones: document.getElementById('pulsacionesCardio').value});
+            if(currentUser) db.collection('users').doc(currentUser.uid).set({cardio: userData.cardio}, {merge:true}).catch(e=>{});
+            document.getElementById('kmCardio').value = ''; document.getElementById('tiempoCardio').value = ''; document.getElementById('pulsacionesCardio').value = '';
+            renderCardio(); showToast("✅ Cardio guardado");
+        };
+
+        document.getElementById('btnSubirFoto').onclick = () => {
+            const fileInput = document.getElementById('fotoInput'); 
+            const fecha = document.getElementById('fechaFoto').value;
+            
+            if(!fileInput.files[0]) { showToast("⚠️ Selecciona una foto", "warning"); return; }
+            if(!fecha) { showToast("⚠️ Selecciona una fecha", "warning"); return; }
+            
+            const btn = document.getElementById('btnSubirFoto'); 
+            btn.innerText = "⏳ Comprimiendo..."; 
+            btn.disabled = true;
+
+            const file = fileInput.files[0];
+
+            const subirDirectamente = (archivoFinal) => {
+                btn.innerText = "⏳ Subiendo a la nube...";
+                const path = `users/${currentUser.uid}/fotos/${Date.now()}_${archivoFinal.name || 'foto.jpg'}`;
+                
+                storage.ref(path).put(archivoFinal)
+                .then(s => s.ref.getDownloadURL())
+                .then(url => {
+                    userData.fotos.unshift({url: url, fecha: fecha, path: path});
+                    if(currentUser) db.collection('users').doc(currentUser.uid).set({fotos: userData.fotos}, {merge:true}).catch(e=>{});
+                    renderFotos(); 
+                    showToast("✅ Foto subida correctamente");
+                    fileInput.value = '';
+                })
+                .catch(err => { showToast("❌ Error al subir", "error"); })
+                .finally(() => { btn.innerText = "Subir a la Nube Segura"; btn.disabled = false; });
+            };
+
+            try {
+                const reader = new FileReader();
+                reader.onerror = () => subirDirectamente(file); 
+                
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onerror = () => subirDirectamente(file); 
+                    
+                    img.onload = function() {
+                        try {
+                            const canvas = document.createElement('canvas');
+                            let width = img.width;
+                            let height = img.height;
+                            const MAX_SIZE = 1200; 
+
+                            if (width > height && width > MAX_SIZE) {
+                                height *= MAX_SIZE / width; width = MAX_SIZE;
+                            } else if (height > MAX_SIZE) {
+                                width *= MAX_SIZE / height; height = MAX_SIZE;
+                            }
+
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+
+                            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                            const path = `users/${currentUser.uid}/fotos/${Date.now()}.jpg`;
+
+                            btn.innerText = "⏳ Subiendo optimizada...";
+                            storage.ref().child(path).putString(dataUrl, 'data_url')
+                            .then(snapshot => snapshot.ref.getDownloadURL())
+                            .then(url => {
+                                userData.fotos.unshift({url: url, fecha: fecha, path: path});
+                                if(currentUser) db.collection('users').doc(currentUser.uid).set({fotos: userData.fotos}, {merge:true}).catch(e=>{});
+                                renderFotos(); 
+                                showToast("✅ Foto comprimida y subida");
+                                fileInput.value = '';
+                            })
+                            .catch(err => subirDirectamente(file)) 
+                            .finally(() => { btn.innerText = "Subir a la Nube Segura"; btn.disabled = false; });
+
+                        } catch (canvasError) {
+                            subirDirectamente(file); 
+                        }
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            } catch (fatalError) {
+                subirDirectamente(file); 
+            }
+        };
+        
+        function renderFotos() {
+            document.getElementById('galeriaFotos').innerHTML = userData.fotos.map((f,i) => `<div class="card" style="padding:5px; text-align:center"><img src="${f.url || f.imgData}" style="width:100%; border-radius:8px;"><br><small>${f.fecha}</small><br><button class="btn-small btn-rojo" onclick="borrarFoto(${i})">🗑️</button></div>`).join('');
+        }
+        
+        window.borrarFoto = i => {
+            if(confirm("¿Borrar esta foto?")) {
+                const f = userData.fotos[i]; if(f.path) storage.ref(f.path).delete().catch(e=>{});
+                userData.fotos.splice(i,1); 
+                if(currentUser) db.collection('users').doc(currentUser.uid).set({fotos: userData.fotos}, {merge:true}).catch(e=>{});
+                renderFotos(); showToast("✅ Foto borrada");
+            }
+        };
+
+        function renderChat() {
+            const c = document.getElementById('chatMensajes');
+            c.innerHTML = userData.chat.map(m => `<div style="text-align:${m.role==='user'?'right':'left'}; margin-bottom:10px;"><span style="background:${m.role==='user'?'rgba(57,255,20,0.2)':'#1e293b'}; padding:8px 12px; border-radius:10px; display:inline-block;">${m.content}</span></div>`).join('');
+            c.scrollTop = c.scrollHeight;
+        }
+        document.getElementById('btnChat').onclick = async () => {
+            const i = document.getElementById('chatInput'); const m = i.value; if(!m) return;
+            i.value = ''; userData.chat.push({role:'user', content:m}); renderChat();
+            const r = await llamarIA(`Contexto patología: ${userData.perfil.patologias}. Pregunta: ${m}`); 
+            if(r) { 
+                userData.chat.push({role:'assistant', content:r}); renderChat(); 
+                if(currentUser) db.collection('users').doc(currentUser.uid).set({chat: userData.chat}, {merge:true}).catch(e=>{}); 
+            }
+        };
+
+        document.getElementById('btnGenerarConsejos').onclick = async () => {
+            const res = await llamarIA(`Usuario con patología: ${userData.perfil.patologias}. Dame: 1) 3 hábitos diarios. 2) 2 suplementos.`);
+            if(res) { document.getElementById('resultadoConsejos').innerHTML = res.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); document.getElementById('resultadoConsejos').style.display='block'; showToast("✅ Consejos listos"); }
+        };
+
+        document.querySelectorAll('.tab-btn').forEach(b => {
+            b.onclick = () => {
+                document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active')); document.querySelectorAll('.seccion').forEach(x => x.classList.remove('activa'));
+                b.classList.add('active'); document.getElementById(b.dataset.tab).classList.add('activa');
+            }
+        });
+
+        // =====================================================================
+        // 🚨 CAMBIO IMPORTANTE: SISTEMA DE PDF COMPATIBLE CON iPHONE (SAFARI)
+        // =====================================================================
+        function descargarPDF(elementId, filename) {
+            const element = document.getElementById(elementId);
+            const opt = {
+                margin:       10,
+                filename:     filename,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#020617' },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            showToast("⏳ Generando PDF...", "warning");
+
+            html2pdf().set(opt).from(element).outputPdf('blob').then((pdfBlob) => {
+                const blobUrl = URL.createObjectURL(pdfBlob);
+                
+                // Si es un iPhone/iPad, abrimos en pestaña nueva para que el usuario pueda usar el botón de "Compartir" de Apple
+                if (isIos()) {
+                    window.open(blobUrl, '_blank');
+                    showToast("✅ PDF abierto en nueva pestaña", "success");
+                } else {
+                    // Si es Android o PC, descargamos directamente
+                    const a = document.createElement('a');
+                    a.href = blobUrl;
+                    a.download = filename;
+                    a.click();
+                    showToast("✅ PDF descargado", "success");
+                }
+            }).catch(err => {
+                showToast("❌ Error al crear PDF", "error");
+            });
+        }
+
+        document.getElementById('btnDescargarPDF').onclick = () => descargarPDF('contenedorMenu', 'Dieta_NutriPro.pdf');
+        document.getElementById('btnDescargarPDFEntreno').onclick = () => descargarPDF('contenedorEntrenoPdf', 'Rutina_NutriPro.pdf');
+        // =====================================================================
+
+        document.getElementById('btnLogin').onclick = async () => {
+            const emailInput = document.getElementById('authEmail').value;
+            const passInput = document.getElementById('authPass').value;
+            const email = emailInput.trim(); 
+            const pass = passInput; 
+            
+            if(!email || !pass) { showToast("⚠️ Escribe tu correo y contraseña", "warning"); return; }
+            
+            const btn = document.getElementById('btnLogin');
+            btn.innerText = "⏳ Comprobando..."; btn.disabled = true;
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, pass);
+            } catch(error) {
+                btn.innerText = "Iniciar Sesión"; btn.disabled = false;
+                if(error.code === 'auth/invalid-email') showToast("❌ El correo no tiene formato válido", "error");
+                else if(error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') showToast("❌ Correo o contraseña incorrectos", "error");
+                else if(error.code === 'auth/too-many-requests') showToast("❌ Demasiados intentos. Espera unos minutos.", "error");
+                else showToast("❌ Error: " + error.message, "error");
+            }
+        };
+        
+        document.getElementById('btnRegister').onclick = async () => {
+            const email = document.getElementById('authEmail').value.trim();
+            const pass = document.getElementById('authPass').value;
+            
+            if(!email || !pass) { showToast("⚠️ Escribe tu correo y contraseña", "warning"); return; }
+            if(pass.length < 6) { showToast("⚠️ La contraseña debe tener al menos 6 caracteres", "warning"); return; }
+            
+            const btn = document.getElementById('btnRegister');
+            btn.innerText = "⏳ Creando..."; btn.disabled = true;
+            
+            try {
+                await auth.createUserWithEmailAndPassword(email, pass);
+            } catch(error) {
+                btn.innerText = "Crear Cuenta"; btn.disabled = false;
+                if(error.code === 'auth/email-already-in-use') showToast("❌ Ese correo ya está registrado", "error");
+                else if(error.code === 'auth/invalid-email') showToast("❌ El correo no tiene formato válido", "error");
+                else showToast("❌ Error: " + error.message, "error");
+            }
+        };
+
+        document.getElementById('btnLogout').onclick = () => auth.signOut();
+    </script>
+</body>
+</html>

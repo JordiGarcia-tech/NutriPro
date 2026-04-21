@@ -304,7 +304,7 @@
                 <h2 class="titulo-seccion">📸 Fotos de Progreso</h2>
                 <div class="card">
                     <div class="grid-2">
-                        <input type="file" id="fotoInput" accept="image/jpeg, image/png, image/jpg" style="padding:8px;">
+                        <input type="file" id="fotoInput" accept="image/*" style="padding:8px;">
                         <input type="date" id="fechaFoto">
                     </div>
                     <button class="btn" id="btnSubirFoto">Subir a la Nube Segura</button>
@@ -638,7 +638,7 @@
             renderCardio(); showToast("✅ Cardio guardado");
         };
 
-        // 🌟 SUBIDA DE FOTOS ARREGLADA CON FEEDBACK VISUAL
+        // 🌟 SISTEMA DE COMPRESIÓN DE FOTOS (TIPO WHATSAPP) PARA IPHONE
         document.getElementById('btnSubirFoto').onclick = () => {
             const fileInput = document.getElementById('fotoInput'); 
             const fecha = document.getElementById('fechaFoto').value;
@@ -646,31 +646,56 @@
             if(!fileInput.files[0]) { showToast("⚠️ Selecciona una foto de la galería o cámara", "warning"); return; }
             if(!fecha) { showToast("⚠️ Selecciona una fecha", "warning"); return; }
             
-            const file = fileInput.files[0]; 
             const btn = document.getElementById('btnSubirFoto'); 
-            
-            btn.innerText = "⏳ Subiendo (puede tardar)..."; 
+            btn.innerText = "⏳ Comprimiendo y subiendo..."; 
             btn.disabled = true;
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            // Leemos el archivo gigante del iPhone
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    // Creamos un lienzo (canvas) para achicar la foto
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 800; // Resolución optimizada (pesará nada)
+                    const scaleSize = MAX_WIDTH / img.width;
+                    
+                    canvas.width = MAX_WIDTH;
+                    canvas.height = img.height * scaleSize;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    // Convertimos la foto del lienzo a JPEG muy ligero
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    
+                    const path = `users/${currentUser.uid}/fotos/${Date.now()}.jpg`;
+                    
+                    // Subimos el texto ligero a Firebase
+                    storage.ref().child(path).putString(dataUrl, 'data_url')
+                    .then(snapshot => snapshot.ref.getDownloadURL())
+                    .then(url => {
+                        userData.fotos.unshift({url: url, fecha: fecha, path: path});
+                        if(currentUser) db.collection('users').doc(currentUser.uid).set({fotos: userData.fotos}, {merge:true}).catch(e=>{});
+                        renderFotos(); 
+                        showToast("✅ Foto subida al instante");
+                        fileInput.value = '';
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        showToast("❌ Error al subir", "error");
+                    })
+                    .finally(() => {
+                        btn.innerText = "Subir a la Nube Segura"; 
+                        btn.disabled = false;
+                    });
+                };
+                img.src = event.target.result;
+            };
             
-            const path = `users/${currentUser.uid}/fotos/${Date.now()}`;
-            
-            storage.ref(path).put(file)
-            .then(snapshot => snapshot.ref.getDownloadURL())
-            .then(url => {
-                userData.fotos.unshift({url: url, fecha: fecha, path: path});
-                db.collection('users').doc(currentUser.uid).set({fotos: userData.fotos}, {merge:true}).catch(e=>{});
-                renderFotos(); 
-                showToast("✅ Foto subida correctamente");
-                fileInput.value = '';
-            })
-            .catch(err => {
-                console.error(err);
-                showToast("❌ Error de conexión al subir", "error");
-            })
-            .finally(() => {
-                btn.innerText = "Subir a la Nube Segura"; 
-                btn.disabled = false;
-            });
+            reader.readAsDataURL(file);
         };
         
         function renderFotos() {
@@ -716,7 +741,6 @@
         document.getElementById('btnDescargarPDF').onclick = () => html2pdf().from(document.getElementById('contenedorMenu')).save('Dieta.pdf');
         document.getElementById('btnDescargarPDFEntreno').onclick = () => html2pdf().from(document.getElementById('contenedorEntrenoPdf')).save('Rutina.pdf');
         
-        // LOGIN / REGISTRO ULTRA RAPIDO (CON FILTRO DE ESPACIOS)
         document.getElementById('btnLogin').onclick = async () => {
             const emailInput = document.getElementById('authEmail').value;
             const passInput = document.getElementById('authPass').value;

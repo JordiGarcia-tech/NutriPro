@@ -304,7 +304,7 @@
                 <h2 class="titulo-seccion">📸 Fotos de Progreso</h2>
                 <div class="card">
                     <div class="grid-2">
-                        <input type="file" id="fotoInput" accept="image/*" style="padding:8px;">
+                        <input type="file" id="fotoInput" accept="image/jpeg, image/png, image/jpg" style="padding:8px;">
                         <input type="date" id="fechaFoto">
                     </div>
                     <button class="btn" id="btnSubirFoto">Subir a la Nube Segura</button>
@@ -381,7 +381,6 @@
             c.appendChild(d); setTimeout(() => d.remove(), 3000);
         }
 
-        // PWA INSTALL LOGIC
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault(); deferredPrompt = e;
@@ -638,64 +637,92 @@
             renderCardio(); showToast("✅ Cardio guardado");
         };
 
-        // 🌟 SISTEMA DE COMPRESIÓN DE FOTOS (TIPO WHATSAPP) PARA IPHONE
+        // 🌟 SISTEMA BLINDADO DE SUBIDA DE FOTOS PARA IPHONE
         document.getElementById('btnSubirFoto').onclick = () => {
             const fileInput = document.getElementById('fotoInput'); 
             const fecha = document.getElementById('fechaFoto').value;
             
-            if(!fileInput.files[0]) { showToast("⚠️ Selecciona una foto de la galería o cámara", "warning"); return; }
+            if(!fileInput.files[0]) { showToast("⚠️ Selecciona una foto", "warning"); return; }
             if(!fecha) { showToast("⚠️ Selecciona una fecha", "warning"); return; }
             
             const btn = document.getElementById('btnSubirFoto'); 
-            btn.innerText = "⏳ Comprimiendo y subiendo..."; 
+            btn.innerText = "⏳ Comprimiendo..."; 
             btn.disabled = true;
 
             const file = fileInput.files[0];
-            const reader = new FileReader();
 
-            // Leemos el archivo gigante del iPhone
-            reader.onload = function(event) {
-                const img = new Image();
-                img.onload = function() {
-                    // Creamos un lienzo (canvas) para achicar la foto
-                    const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 800; // Resolución optimizada (pesará nada)
-                    const scaleSize = MAX_WIDTH / img.width;
-                    
-                    canvas.width = MAX_WIDTH;
-                    canvas.height = img.height * scaleSize;
-                    
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    
-                    // Convertimos la foto del lienzo a JPEG muy ligero
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                    
-                    const path = `users/${currentUser.uid}/fotos/${Date.now()}.jpg`;
-                    
-                    // Subimos el texto ligero a Firebase
-                    storage.ref().child(path).putString(dataUrl, 'data_url')
-                    .then(snapshot => snapshot.ref.getDownloadURL())
-                    .then(url => {
-                        userData.fotos.unshift({url: url, fecha: fecha, path: path});
-                        if(currentUser) db.collection('users').doc(currentUser.uid).set({fotos: userData.fotos}, {merge:true}).catch(e=>{});
-                        renderFotos(); 
-                        showToast("✅ Foto subida al instante");
-                        fileInput.value = '';
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        showToast("❌ Error al subir", "error");
-                    })
-                    .finally(() => {
-                        btn.innerText = "Subir a la Nube Segura"; 
-                        btn.disabled = false;
-                    });
-                };
-                img.src = event.target.result;
+            // FUNCIÓN DE PARACAÍDAS (Si falla la compresión, la sube normal)
+            const subirDirectamente = (archivoFinal) => {
+                btn.innerText = "⏳ Subiendo a la nube...";
+                const path = `users/${currentUser.uid}/fotos/${Date.now()}_${archivoFinal.name || 'foto.jpg'}`;
+                
+                storage.ref(path).put(archivoFinal)
+                .then(s => s.ref.getDownloadURL())
+                .then(url => {
+                    userData.fotos.unshift({url: url, fecha: fecha, path: path});
+                    if(currentUser) db.collection('users').doc(currentUser.uid).set({fotos: userData.fotos}, {merge:true}).catch(e=>{});
+                    renderFotos(); 
+                    showToast("✅ Foto subida correctamente");
+                    fileInput.value = '';
+                })
+                .catch(err => { showToast("❌ Error al subir", "error"); })
+                .finally(() => { btn.innerText = "Subir a la Nube Segura"; btn.disabled = false; });
             };
-            
-            reader.readAsDataURL(file);
+
+            // INTENTO DE COMPRESIÓN TIPO WHATSAPP
+            try {
+                const reader = new FileReader();
+                reader.onerror = () => subirDirectamente(file); // Si falla el lector
+                
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onerror = () => subirDirectamente(file); // Si el iPhone bloquea la carga
+                    
+                    img.onload = function() {
+                        try {
+                            const canvas = document.createElement('canvas');
+                            let width = img.width;
+                            let height = img.height;
+                            const MAX_SIZE = 1200; // Calidad muy buena, pero peso pluma
+
+                            if (width > height && width > MAX_SIZE) {
+                                height *= MAX_SIZE / width; width = MAX_SIZE;
+                            } else if (height > MAX_SIZE) {
+                                width *= MAX_SIZE / height; height = MAX_SIZE;
+                            }
+
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+
+                            // El truco definitivo: pasar a JPEG muy ligero
+                            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                            const path = `users/${currentUser.uid}/fotos/${Date.now()}.jpg`;
+
+                            btn.innerText = "⏳ Subiendo optimizada...";
+                            storage.ref().child(path).putString(dataUrl, 'data_url')
+                            .then(snapshot => snapshot.ref.getDownloadURL())
+                            .then(url => {
+                                userData.fotos.unshift({url: url, fecha: fecha, path: path});
+                                if(currentUser) db.collection('users').doc(currentUser.uid).set({fotos: userData.fotos}, {merge:true}).catch(e=>{});
+                                renderFotos(); 
+                                showToast("✅ Foto comprimida y subida");
+                                fileInput.value = '';
+                            })
+                            .catch(err => subirDirectamente(file)) // Si falla Firebase
+                            .finally(() => { btn.innerText = "Subir a la Nube Segura"; btn.disabled = false; });
+
+                        } catch (canvasError) {
+                            subirDirectamente(file); // Si el iPhone bloquea por memoria
+                        }
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            } catch (fatalError) {
+                subirDirectamente(file); // Si todo explota, la subimos a lo bruto
+            }
         };
         
         function renderFotos() {
